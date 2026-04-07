@@ -47,6 +47,25 @@ GENERIC_CATEGORY_HINTS = {
 }
 
 
+def format_text_value(value: object, fallback: str = "No data") -> str:
+    text = str(value or "").strip()
+    if not text or text.lower() in {"nan", "none"}:
+        return fallback
+    return text
+
+
+def format_category_label(value: object) -> str:
+    text = format_text_value(value, fallback="No data")
+    if text == "No data":
+        return text
+
+    normalized = text.replace("_", " ").strip()
+    lowered = normalized.lower()
+    if "hairdresser" in lowered or "hair dresser" in lowered:
+        return "Hair Dresser"
+    return normalized.title()
+
+
 def build_search_tags(row: pd.Series) -> str:
     name = str(row.get("name", "") or "")
     category = str(row.get("category", "") or "")
@@ -121,26 +140,69 @@ def render_store_cards(stores_table: pd.DataFrame) -> None:
 
     for idx, (_, row) in enumerate(stores_table.head(6).iterrows()):
         with card_columns[idx % len(card_columns)]:
-            st.markdown(
-                f"""
-                <div style="border:1px solid #dbeafe;border-radius:12px;
-                padding:0.9rem;margin-bottom:0.8rem;background:#f8fbff;">
-                    <div style="font-size:1.05rem;font-weight:700;color:#1d4ed8;">
-                        {html.escape(str(row.get('name', 'Store')))}
-                    </div>
-                    <div style="font-size:0.9rem;color:#334155;">
-                        Category: {html.escape(str(row.get('category', '')))}
-                    </div>
-                    <div style="font-size:0.85rem;color:#475569; margin-top:0.35rem;">
-                        {html.escape(str(row.get('address', 'No address listed')))}
-                    </div>
-                    <div style="font-size:0.82rem;color:#0f766e; margin-top:0.35rem;">
-                        Matches: {html.escape(str(row.get('match_reason', 'general match')))}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            with st.container(border=True):
+                st.markdown(
+                    f"**{format_text_value(row.get('name', 'Store'), fallback='Store')}**"
+                )
+                st.write(
+                    f"**Category:** {format_category_label(row.get('category', ''))}"
+                )
+                st.write(
+                    format_text_value(
+                        row.get('address', ''),
+                        fallback="No address listed",
+                    )
+                )
+                st.caption(
+                    f"Matches: {format_text_value(row.get('match_reason', 'general match'), fallback='general match')}"
+                )
+
+
+def render_map_legend_and_explanation() -> None:
+    st.markdown("### Map legend and output explanation")
+    st.markdown(
+        """
+        <div style="border:1px solid #e2e8f0;border-radius:12px;padding:1rem;
+        background:#ffffff;margin-bottom:1rem;">
+            <div style="font-weight:700;margin-bottom:0.6rem;color:#0f172a;">
+                Color guide
+            </div>
+            <div style="display:flex;gap:0.6rem;align-items:center;margin-bottom:0.35rem;">
+                <span style="display:inline-block;width:18px;height:18px;background:#fff7bc;
+                border:1px solid #cbd5e1;"></span>
+                <span><b>Light yellow / pale orange</b>: lower % African American</span>
+            </div>
+            <div style="display:flex;gap:0.6rem;align-items:center;margin-bottom:0.35rem;">
+                <span style="display:inline-block;width:18px;height:18px;background:#fd8d3c;
+                border:1px solid #cbd5e1;"></span>
+                <span><b>Darker orange</b>: higher % African American</span>
+            </div>
+            <div style="display:flex;gap:0.6rem;align-items:center;margin-bottom:0.35rem;">
+                <span style="display:inline-block;width:18px;height:18px;border:3px solid #08306b;
+                background:#ffffff;"></span>
+                <span><b>Dark blue outline</b>: higher-need / underserved tract</span>
+            </div>
+            <div style="display:flex;gap:0.6rem;align-items:center;">
+                <span style="display:inline-block;width:18px;height:18px;border-radius:50%;
+                background:#1d4ed8;"></span>
+                <span><b>Blue point</b>: beauty supply location matching the filters</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    with st.expander("What the outputs mean", expanded=True):
+        st.markdown(
+            """
+            - **Census tracts**: neighborhood-sized Census areas included in the query.
+            - **Stores**: filtered beauty supply locations found in the selected area.
+            - **Avg nearest store**: average distance from each tract center to the closest store.
+            - **High-need tracts**: tracts with the highest underserved scores.
+            - **Top underserved tracts**: places where lower access and higher need overlap.
+            - **Product / brand results**: stores most relevant to the chosen product category or typed brand.
+            """
+        )
 
 
 def build_map_html(
@@ -191,10 +253,10 @@ def build_map_html(
 
     for _, row in rows_to_plot.iterrows():
         popup_parts = [
-            f"<b>{html.escape(str(row.get('name', 'Store')))}</b>",
-            f"Category: {html.escape(str(row.get('category', '')))}",
-            f"Address: {html.escape(str(row.get('address', '')))}",
-            f"Search tags: {html.escape(str(row.get('search_tags', '')))}",
+            f"<b>{html.escape(format_text_value(row.get('name', 'Store'), fallback='Store'))}</b>",
+            f"Category: {html.escape(format_category_label(row.get('category', '')))}",
+            f"Address: {html.escape(format_text_value(row.get('address', ''), fallback='No data'))}",
+            f"Search tags: {html.escape(format_text_value(row.get('search_tags', ''), fallback='No data'))}",
         ]
         folium.CircleMarker(
             location=[float(row["lat"]), float(row["lon"])],
@@ -342,19 +404,24 @@ if result:
     )
 
     st.subheader("Interactive map")
-    map_html = build_map_html(tracts, searchable_stores, combined_query)
-    if map_html:
-        components.html(map_html, height=720, scrolling=True)
-    else:
-        html_path = outputs.get("html")
-        if html_path and Path(html_path).exists():
-            components.html(
-                Path(html_path).read_text(encoding="utf-8"),
-                height=720,
-                scrolling=True,
-            )
+    map_col, legend_col = st.columns([3, 1.35])
+    with map_col:
+        map_html = build_map_html(tracts, searchable_stores, combined_query)
+        if map_html:
+            components.html(map_html, height=720, scrolling=True)
         else:
-            st.warning("Interactive HTML map was not created.")
+            html_path = outputs.get("html")
+            if html_path and Path(html_path).exists():
+                components.html(
+                    Path(html_path).read_text(encoding="utf-8"),
+                    height=720,
+                    scrolling=True,
+                )
+            else:
+                st.warning("Interactive HTML map was not created.")
+
+    with legend_col:
+        render_map_legend_and_explanation()
 
     st.subheader("Top underserved tracts")
     top_tracts = tracts[
@@ -378,6 +445,15 @@ if result:
 
     st.subheader("Product / brand search results")
     table_to_show = matched_stores if combined_query.strip() else searchable_stores
+    table_to_show = table_to_show.copy()
+    if "category" in table_to_show.columns:
+        table_to_show["category"] = table_to_show["category"].apply(
+            format_category_label
+        )
+    if "address" in table_to_show.columns:
+        table_to_show["address"] = table_to_show["address"].apply(
+            lambda value: format_text_value(value, fallback="No data")
+        )
     st.dataframe(table_to_show, use_container_width=True)
 
     st.subheader("Download outputs")
