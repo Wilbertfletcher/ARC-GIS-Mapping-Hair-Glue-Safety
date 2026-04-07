@@ -233,18 +233,114 @@ def slugify(value: str) -> str:
     return value.strip("_") or "query"
 
 
+def build_place_query(city: str = "", state_value: str = "") -> str:
+    parts = [part.strip() for part in [city, state_value, "USA"] if part and part.strip()]
+    if not parts:
+        raise ValueError("Please provide a U.S. city, a state, or both.")
+    return ", ".join(parts)
+
+
 def fetch_place_record(place_query: str) -> dict:
     response = requests.get(
         "https://nominatim.openstreetmap.org/search",
-        params={"q": place_query, "format": "jsonv2", "limit": 1},
+        params={
+            "q": place_query,
+            "format": "jsonv2",
+            "limit": 1,
+            "addressdetails": 1,
+            "countrycodes": "us",
+        },
         headers=REQUEST_HEADERS,
         timeout=60,
     )
     response.raise_for_status()
     results = response.json()
     if not results:
-        raise ValueError(f"Could not resolve a place for query: {place_query}")
+        raise ValueError(f"Could not resolve a U.S. place for query: {place_query}")
     return results[0]
+
+
+def infer_state_from_place(place: dict, fallback: str = "") -> str:
+    fallback = (fallback or "").strip()
+    if fallback:
+        return fallback
+
+    address = place.get("address", {}) or {}
+    for candidate in [
+        address.get("state"),
+        address.get("state_code"),
+        address.get("ISO3166-2-lvl4"),
+    ]:
+        if not candidate:
+            continue
+        candidate_text = str(candidate).replace("US-", "").strip()
+        if candidate_text:
+            return candidate_text
+
+    display_name = str(place.get("display_name", ""))
+    for piece in [item.strip() for item in display_name.split(",")]:
+        if us.states.lookup(piece):
+            return piece
+
+    raise ValueError(
+        "Could not determine the state from the place result. "
+        "Please include a U.S. state name or abbreviation."
+    )
+
+
+def build_overpass_queries(
+    place: dict,
+    south: str,
+    west: str,
+    north: str,
+    east: str,
+    retail_pattern: str,
+    beauty_name_pattern: str,
+) -> list[str]:
+    queries = []
+    osm_type = str(place.get("osm_type", "")).lower()
+    osm_id = place.get("osm_id")
+
+    if osm_id is not None:
+        try:
+            osm_id = int(osm_id)
+            if osm_type == "relation":
+                area_id = 3600000000 + osm_id
+            elif osm_type == "way":
+                area_id = 2400000000 + osm_id
+            else:
+                area_id = None
+
+            if area_id is not None:
+                queries.append(
+                    f"""
+                    [out:json][timeout:90];
+                    area({area_id})->.searchArea;
+                    (
+                      nwr(area.searchArea)[\"shop\"~\"{retail_pattern}\"];
+                      nwr(area.searchArea)[\"shop\"=\"beauty\"][\"name\"~\"{beauty_name_pattern}\",i];
+                    );
+                    out center tags;
+                    """
+                )
+        except (TypeError, ValueError):
+            pass
+
+    queries.append(
+        f"""
+        [out:json][timeout:90];
+        (
+          node[\"shop\"~\"{retail_pattern}\"]({south},{west},{north},{east});
+          way[\"shop\"~\"{retail_pattern}\"]({south},{west},{north},{east});
+          relation[\"shop\"~\"{retail_pattern}\"]({south},{west},{north},{east});
+          node[\"shop\"=\"beauty\"][\"name\"~\"{beauty_name_pattern}\",i]({south},{west},{north},{east});
+          way[\"shop\"=\"beauty\"][\"name\"~\"{beauty_name_pattern}\",i]({south},{west},{north},{east});
+          relation[\"shop\"=\"beauty\"][\"name\"~\"{beauty_name_pattern}\",i]({south},{west},{north},{east});
+        );
+        out center tags;
+        """
+    )
+    return queries
 
 
 def fetch_state_tracts(
@@ -335,14 +431,10 @@ def fetch_osm_beauty_supply_stores(
     city: str = "",
     state_value: str = "",
     include_wig_shops: bool = False,
+    place: dict | None = None,
 ) -> pd.DataFrame:
-    place_parts = [
-        part.strip()
-        for part in [city, state_value, "USA"]
-        if part and part.strip()
-    ]
-    place_query = ", ".join(place_parts)
-    place = fetch_place_record(place_query)
+    place_query = build_place_query(city=city, state_value=state_value)
+    place = place or fetch_place_record(place_query)
     south, north, west, east = place["boundingbox"]
 
     base_shop_tags = ["cosmetics", "perfumery", "hairdresser_supply"]
@@ -351,19 +443,6 @@ def fetch_osm_beauty_supply_stores(
     retail_pattern = "|".join(base_shop_tags)
     beauty_name_pattern = "Beauty|Supply|Cosmo|Sally|Ulta|Merle|Outlet|Wig"
 
-    overpass_query = f"""
-    [out:json][timeout:90];
-    (
-      node[\"shop\"~\"{retail_pattern}\"]({south},{west},{north},{east});
-      way[\"shop\"~\"{retail_pattern}\"]({south},{west},{north},{east});
-      relation[\"shop\"~\"{retail_pattern}\"]({south},{west},{north},{east});
-      node[\"shop\"=\"beauty\"][\"name\"~\"{beauty_name_pattern}\",i]({south},{west},{north},{east});
-      way[\"shop\"=\"beauty\"][\"name\"~\"{beauty_name_pattern}\",i]({south},{west},{north},{east});
-      relation[\"shop\"=\"beauty\"][\"name\"~\"{beauty_name_pattern}\",i]({south},{west},{north},{east});
-    );
-    out center tags;
-    """
-
     elements = []
     errors = []
     overpass_endpoints = [
@@ -371,21 +450,33 @@ def fetch_osm_beauty_supply_stores(
         "https://lz4.overpass-api.de/api/interpreter",
         "https://overpass.kumi.systems/api/interpreter",
     ]
+    query_candidates = build_overpass_queries(
+        place=place,
+        south=south,
+        west=west,
+        north=north,
+        east=east,
+        retail_pattern=retail_pattern,
+        beauty_name_pattern=beauty_name_pattern,
+    )
 
-    for endpoint in overpass_endpoints:
-        try:
-            response = requests.get(
-                endpoint,
-                params={"data": overpass_query},
-                headers=REQUEST_HEADERS,
-                timeout=120,
-            )
-            response.raise_for_status()
-            elements = response.json().get("elements", [])
-            if elements:
-                break
-        except requests.RequestException as exc:
-            errors.append(f"{endpoint}: {exc}")
+    for overpass_query in query_candidates:
+        for endpoint in overpass_endpoints:
+            try:
+                response = requests.get(
+                    endpoint,
+                    params={"data": overpass_query},
+                    headers=REQUEST_HEADERS,
+                    timeout=120,
+                )
+                response.raise_for_status()
+                elements = response.json().get("elements", [])
+                if elements:
+                    break
+            except requests.RequestException as exc:
+                errors.append(f"{endpoint}: {exc}")
+        if elements:
+            break
 
     rows = []
     for element in elements:
@@ -872,16 +963,15 @@ def analyze_place(
     low_income_threshold: float = 40000.0,
     include_wig_shops: bool = False,
 ) -> dict:
-    place_query = ", ".join(
-        [part.strip() for part in [city, state_value, "USA"] if part and part.strip()]
-    )
-    if not place_query:
-        raise ValueError("Please provide at least a city or state to query.")
+    city = (city or "").strip()
+    state_value = (state_value or "").strip()
+    place_query = build_place_query(city=city, state_value=state_value)
 
     place = fetch_place_record(place_query)
+    resolved_state = infer_state_from_place(place, fallback=state_value)
     south, north, west, east = [float(value) for value in place["boundingbox"]]
 
-    tracts = fetch_state_tracts(state_value=state_value, year=acs_year)
+    tracts = fetch_state_tracts(state_value=resolved_state, year=acs_year)
     tracts = subset_tracts_to_bbox(
         tracts,
         west=west,
@@ -891,7 +981,7 @@ def analyze_place(
     )
     tracts = attach_demographics(
         tracts,
-        state_value=state_value,
+        state_value=resolved_state,
         acs_year=acs_year,
         census_api_key=census_api_key,
         skip_census_api=False,
@@ -899,8 +989,9 @@ def analyze_place(
 
     stores_df = fetch_osm_beauty_supply_stores(
         city=city,
-        state_value=state_value,
+        state_value=resolved_state,
         include_wig_shops=include_wig_shops,
+        place=place,
     )
     stores = gpd.GeoDataFrame(
         stores_df,

@@ -282,14 +282,22 @@ if "analysis_result" not in st.session_state:
 
 st.title("Beauty Supply Access Explorer")
 st.caption(
-    "Query a city or state to map beauty supply access, Census demographics, "
-    "and underserved tracts."
+    "Search any U.S. city, any U.S. state, or both to map beauty supply access, "
+    "Census demographics, and underserved tracts."
 )
 
 with st.sidebar:
     st.header("Query settings")
-    city = st.text_input("City", value="Durham")
-    state = st.text_input("State", value="NC")
+    city = st.text_input(
+        "City",
+        value="Durham",
+        placeholder="e.g. Chicago or leave blank for state-wide search",
+    )
+    state = st.text_input(
+        "State",
+        value="NC",
+        placeholder="e.g. NC, Texas, or California",
+    )
     product_category = st.selectbox(
         "Product category",
         options=list(PRODUCT_CATEGORY_OPTIONS.keys()),
@@ -319,14 +327,14 @@ with st.sidebar:
     run_query = st.button("Run analysis", type="primary")
 
 st.info(
-    "Tip: entering a city gives a faster, more focused result. "
-    "State-only queries may take longer."
+    "Tip: you can enter a U.S. city, a U.S. state, or both. "
+    "State-only queries may take longer because they cover a larger area."
 )
 
 if run_query:
-    if not state.strip():
+    if not city.strip() and not state.strip():
         st.error(
-            "Please enter at least a state abbreviation or full state name."
+            "Please enter a U.S. city, a U.S. state, or both."
         )
     else:
         try:
