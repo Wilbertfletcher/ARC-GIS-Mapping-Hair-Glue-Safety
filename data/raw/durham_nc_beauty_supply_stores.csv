@@ -1,0 +1,9 @@
+name,address,city,state,zip,lat,lon,category
+Beauty World,1418 Avondale Drive,Durham,NC,27701.0,36.0064128,-78.8843773,beauty
+CosmoProf,4600 Durham Chapel Hill Boulevard,Durham,NC,27707.0,35.9627599,-78.9781849,beauty
+Merle Norman,4011 Durham Chapel Hill Boulevard,Durham,NC,27707.0,35.9667623,-78.9575462,beauty
+Ulta Beauty,6923 Fayetteville Road,Durham,NC,27713.0,35.9030133,-78.936862,beauty
+Bath & Body Works,8399 Brier Creek Parkway,Durham,NC,,35.9066278,-78.7834724,cosmetics
+NC Beauty Outlet,1517 Glen School Road,Durham,NC,,36.0273501,-78.8416154,cosmetics
+Sally Beauty,,Durham,NC,,35.9063291,-78.7850492,hairdresser_supply
+Sally Beauty,,Durham,NC,,35.9041232,-78.9533415,hairdresser_supply

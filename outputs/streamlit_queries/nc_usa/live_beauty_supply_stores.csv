@@ -1,0 +1,350 @@
+name,address,city,state,zip,lat,lon,category
+bluemercury,131 North Main Street,Greenville,NC,29601,34.8524382,-82.3984941,cosmetics
+Merle Norman,2537 North Pleasantburg Drive,Greenville,SC,29609,34.8885922,-82.3839285,cosmetics
+Sally Beauty,159 Rolling Hills Circle,Easley,SC,29640,34.8285993,-82.5472233,hairdresser_supply
+Ulta Beauty,1800 East Franklin Street,Chapel Hill,NC,27514,35.9369481,-79.0245019,cosmetics
+Sally Beauty,1051 Beaver Creek Commons Drive,Apex,NC,27502-3918,35.7440506,-78.8729995,hairdresser_supply
+Inspirational You Beauty Box,,,NC,,35.5074579,-78.3163231,hairdresser_supply
+Bath & Body Works,1025 Outlet Center Drive,Smithfield,NC,27577,35.509685,-78.3167611,cosmetics
+Perfumania,1025 Outlet Center Drive,Smithfield,NC,27577,35.5097323,-78.3166602,perfumery
+Perfume Outlet,,,NC,,35.5098362,-78.3164387,perfumery
+Bath & Body Works,,,NC,,35.9277448,-79.0273539,cosmetics
+Sally Beauty,,,NC,,35.5783072,-77.3833852,hairdresser_supply
+Ulta Beauty,1210 Bridford Parkway,Greensboro,NC,27407,36.0571751,-79.9071522,cosmetics
+Ulta Beauty,1506 W O Ezell Boulevard,Spartanburg,SC,29301,34.9379835,-81.9888355,cosmetics
+Sally Beauty,30 Orchard Park Drive,Greenville,SC,29615,34.8554398,-82.3340611,hairdresser_supply
+Merle Norman,402 West Fleming Drive,Morganton,NC,28655,35.7350517,-81.6845071,cosmetics
+Bath & Body Works,,,NC,,34.9887442,-78.3505988,cosmetics
+Bath & Body Works,,,NC,,33.7843998,-78.774225,cosmetics
+Fragrance Outlet,,,NC,,33.7846037,-78.7736433,perfumery
+bareMinerals,,,NC,,33.7842328,-78.7741709,cosmetics
+Bath & Body Works,,,NC,,33.7924785,-78.7677204,cosmetics
+Bath & Body Works,1125 Woodruff Road,Greenville,NC,29607,34.8288655,-82.2975677,cosmetics
+H&Y Beauty Supply,,,NC,,33.8804651,-79.757526,beauty
+Sally Beauty,,,NC,,35.9261853,-80.5891501,hairdresser_supply
+Sally Beauty,,,NC,,35.6507494,-80.4611281,hairdresser_supply
+Sally Beauty,259 Premier Boulevard,Roanoke Rapids,NC,27870,36.4271757,-77.6341166,hairdresser_supply
+Aveda,,,NC,,35.1456417,-80.8252851,cosmetics
+The Body Shop,4400 sharon road,charlotte,nc,28210,35.1522768,-80.8311783,cosmetics
+Aveda,4400 sharon road,charlotte,nc,28210,35.152466,-80.83229,cosmetics
+Lush,4400 sharon road,charlotte,nc,28210,35.1525314,-80.8322903,cosmetics
+Bath & Body Works,4400 sharon road,charlotte,nc,28210,35.1527538,-80.8321237,cosmetics
+Origins,4400 sharon road,charlotte,nc,28210,35.1526048,-80.8326293,cosmetics
+L'Occitane,4400 sharon road,charlotte,nc,28210,35.152154,-80.8327915,cosmetics
+Sally Beauty,,,NC,,35.2127212,-80.7833298,hairdresser_supply
+Avon,,,NC,,35.212135,-80.7837038,cosmetics
+Bath & Body Works,,,NC,,35.1758361,-80.8020718,cosmetics
+Ulta Beauty,236 South Sharon Amity Road,Charlotte,NC,28211,35.1763184,-80.8018676,beauty
+Merle Norman,10420 East Independence Boulevard,Matthews,NC,28105,35.1256768,-80.70733,cosmetics
+Sally Beauty,1451 Woodruff Road,Greenville,NC,29607,34.8234027,-82.2849875,hairdresser_supply
+Sally Beauty,1216 Bridford Parkway,Greensboro,NC,,36.0568473,-79.903949,hairdresser_supply
+Sally Beauty,339 Harrison Bridge Road,Simpsonville,NC,29680,34.7041812,-82.2557099,hairdresser_supply
+Bath & Body Works,,,NC,,35.9022748,-84.1483607,cosmetics
+Beauty World,,,NC,,35.1110871,-77.068011,beauty
+World Beauty Supply,,,NC,,35.1200056,-77.0803049,beauty
+Sally Beauty,,,NC,,35.1015332,-77.0859566,hairdresser_supply
+Ulta Beauty,3350 West Friendly Avenue,,NC,27410,36.0881797,-79.8398386,beauty
+Sally Beauty,,,NC,,35.854621,-80.0667444,hairdresser_supply
+Merle Norman,3741 Battleground Avenue,,NC,,36.1353764,-79.8601815,beauty
+iBeauty Supply,,,NC,,36.0388297,-79.8521011,beauty
+Bath & Body Works,,,NC,,36.0392768,-79.8384209,cosmetics
+Bath & Body Works,,,NC,,35.4455279,-80.881027,cosmetics
+Sensational Beauty Supply,,,NC,,35.795995,-78.5028607,beauty
+Sally Beauty,224 Lowes Boulevard,Lexington,NC,,35.7939581,-80.2616172,hairdresser_supply
+Bath & Body Works,400 Crossroads Boulevard,Cary,NC,27518,35.7594239,-78.7376303,cosmetics
+Ulta Beauty,5900 Poyner Anchor Lane,Raleigh,NC,27616,35.8651,-78.5674816,beauty
+Merle Norman,,,NC,,35.5825732,-78.7999814,cosmetics
+One Beauty World,,,NC,,35.1708245,-78.9753509,beauty
+The Body Shop,,,NC,,35.2203234,-80.9436976,cosmetics
+Merle Norman,101 Verdae Boulevard,Greenville,NC,29607,34.8215525,-82.3416682,cosmetics
+Empire Hair & Beauty Supply,101 Verdae Boulevard,Greenville,NC,29607,34.8219399,-82.3396102,hairdresser_supply
+Bath & Body Works,,,NC,,33.9820923,-84.2170512,cosmetics
+Ulta Beauty,5145 Peachtree Parkway,Berkeley Lake,GA,30092,33.9822991,-84.2168929,beauty
+Sheree's Natural Cosmetics,3008 Northline Avenue,,NC,,36.0879207,-79.8293488,cosmetics
+Sephora,803 Friendly Center Road,,NC,,36.0868919,-79.830796,cosmetics
+King's Beauty Supply,117 West Butler Road,Mauldin,NC,29662,34.776868,-82.3108134,hairdresser_supply
+EISS,603 Haywood Road,Greenville,NC,29607,34.8484975,-82.3406125,hairdresser_supply
+Ulta Beauty,1125 Woodruff Road,Greenville,SC,29607,34.8292472,-82.2983017,cosmetics
+Ulta Beauty,2116 Village Market Place,Morrisville,NC,27560,35.8073259,-78.8169479,cosmetics
+Diva Beauty Supply,3237 North Pleasantburg Drive,Greenville,NC,29609,34.8888132,-82.4019331,beauty
+Bath & Body Works,3265 North Pleasantburg Drive,Greenville,NC,29609,34.890097,-82.4037698,cosmetics
+CosmoProf,,,NC,,36.0864976,-80.2910611,hairdresser_supply
+Bath & Body Works,,,NC,,34.1298461,-80.8785162,cosmetics
+super clips,,,NC,,35.4672907,-83.0095862,cosmetics
+MAC Cosmetics,,,NC,,35.220705,-80.9421255,cosmetics
+Sally Beauty,,,NC,,34.0703657,-81.1578243,hairdresser_supply
+Ulta Beauty,320 Harbison Boulevard,Columbia,SC,29212,34.072761,-81.155208,cosmetics
+Bath & Body Works,801 Friendly Center Road,Greensboro,NC,27408,36.0866299,-79.8309445,cosmetics
+Sephora,4400 sharon road,charlotte,nc,28210,35.1519915,-80.8317468,cosmetics
+bareMinerals,4400 sharon road,charlotte,nc,28210,35.1509051,-80.8331504,cosmetics
+MAC Cosmetics,4400 sharon road,charlotte,nc,28210,35.1518702,-80.8312978,cosmetics
+Merle Norman,,,NC,,35.08327,-80.8770703,cosmetics
+Bath & Body Works,,,NC,,35.0825824,-80.8765362,cosmetics
+Sephora,,,NC,,35.3523382,-80.8497906,cosmetics
+Bath & Body Works,,,NC,,35.3520277,-80.8501967,cosmetics
+Bath & Body Works,,,NC,,36.0701419,-79.508401,cosmetics
+Avon Outlet Store,104 North Main Street,Fountain Inn,SC,29644,34.6936454,-82.1997367,cosmetics
+Bath & Body Works,,,NC,,35.8412802,-78.6808616,cosmetics
+The Body Shop,,,NC,,35.8396185,-78.6791737,cosmetics
+Lush,,,NC,,35.8399872,-78.6794544,cosmetics
+MAC Cosmetics,,,NC,,35.8399423,-78.6797016,cosmetics
+Sephora,,,NC,,34.0657584,-83.9824684,cosmetics
+Diva Beauty Supply,621 Fairview Road,Simpsonville,NC,29680,34.7152322,-82.2531756,cosmetics
+Avon,617 Saint Andrews Road,Columbia,SC,29210,34.0453278,-81.1248723,cosmetics
+King's Beauty Supply,,,NC,,34.0460538,-81.1009071,beauty
+Palmetto Beauty & Wigs,,,NC,,34.1068961,-81.1899447,beauty
+Cosmetics Company,1645 Parkway,Sevierville,TN,37862,35.8316305,-83.5725978,cosmetics
+Sally Beauty,,,NC,,33.9999079,-81.2189302,hairdresser_supply
+L'Occitane,,,NC,,34.8496307,-82.3341215,cosmetics
+Sephora,,,NC,,34.849564,-82.334215,cosmetics
+Bath & Body Works,,,NC,,34.8496801,-82.3338056,cosmetics
+Beauty World,,,NC,,34.0248321,-81.0811907,beauty
+Bath & Body Works,,,NC,,34.0664599,-80.9622246,cosmetics
+Beauty World,,,NC,,34.0591775,-81.0098698,beauty
+Sally Beauty,,,NC,,34.0293788,-81.106597,hairdresser_supply
+Bath & Body Works,,,NC,,35.071813,-78.9603315,cosmetics
+Sephora,,,NC,,35.0731988,-78.9606223,cosmetics
+Sally Beauty,,,NC,,35.0676729,-78.9629664,hairdresser_supply
+Ulta Beauty,5075 Morganton Road,Fayetteville,NC,28314,35.0682023,-78.9623173,beauty
+Bath & Body Works,,,NC,,35.0963948,-80.7852332,cosmetics
+Ulta Beauty,1461 University Drive,Burlington,NC,27215,36.0655599,-79.5227474,beauty
+Sally Beauty,,,NC,,36.0677129,-79.5210415,hairdresser_supply
+Sally Beauty,,,NC,,33.9810152,-81.0977072,hairdresser_supply
+A & J Beauty Supply,,,NC,,33.8793881,-83.9376569,beauty
+Ulta Beauty,165 Shenstone Boulevard,Garner,NC,27529,35.6943021,-78.5805939,cosmetics
+Bath & Body Works,1453 Garner Station Boulevard,Raleigh,NC,27603,35.7229107,-78.6551098,cosmetics
+Ulta Beauty,409 Crossroads Boulevard,Cary,NC,27518,35.7615921,-78.7357008,beauty
+iBeauty Supply,3233 Avent Ferry Road,Raleigh,NC,27606,35.7664061,-78.6962456,beauty
+The Fragrance Shop,200 North Greensboro Street,Carrboro,NC,27510,35.9114171,-79.0710793,perfumery
+CosmoProf,1474 Garner Station Boulevard,Raleigh,NC,27603,35.7261504,-78.6540307,hairdresser_supply
+Beauty World,,,NC,,35.9832209,-80.0225815,beauty
+Sally Beauty,,,NC,,35.2757127,-82.7039357,hairdresser_supply
+Merle Norman,4011 Durham Chapel Hill Boulevard,Durham,NC,27707,35.9667623,-78.9575462,beauty
+Ulta Beauty,13350 Clemson Boulevard,Seneca,SC,29678,34.6908673,-82.8579841,cosmetics
+Sally Beauty,,,NC,,35.9063291,-78.7850492,hairdresser_supply
+CosmoProf,4600 Durham Chapel Hill Boulevard,Durham,NC,27707,35.9627599,-78.9781849,beauty
+Tresor Rare De Premier,,,NC,,35.8033424,-83.5700624,perfumery
+Avon,312 South Main Street,Woodruff,SC,29388,34.7370147,-82.0358469,cosmetics
+Town Beauty Supply,397 West Main Street,Spartanburg,SC,29301,34.946164,-81.9401949,beauty
+Sally Beauty,120 Dorman Commerce Drive,Spartanburg,SC,29301,34.931458,-81.9863118,hairdresser_supply
+Sally Beauty,4018 Highway 9,Boiling Springs,SC,29316,35.0521325,-81.9871067,hairdresser_supply
+K-Wig Beauty Supply,,,NC,,35.8229569,-80.2543337,beauty
+Total Beauty Supply,,,NC,,35.8911183,-80.0719587,beauty
+Wigs,,,NC,,35.9755343,-80.0184705,beauty
+Ulta Beauty,1316 West Wade Hampton Boulevard,Greer,SC,29650,34.9422234,-82.2624895,cosmetics
+Sally Beauty,,,NC,,35.6498969,-82.0301552,hairdresser_supply
+Ulta Beauty,3 South Tunnel Road,Asheville,NC,28805,35.5816697,-82.526106,beauty
+Beauty Supply,,,NC,,36.0516583,-79.8054888,beauty
+Desires Beauty Supply,2813 West Sugar Creek Road,Charlotte,NC,28269,35.3003401,-80.8022766,beauty
+Beauty Supply,,,NC,,35.2486223,-80.8168514,beauty
+Sally Beauty,,,NC,,35.0254938,-79.054502,hairdresser_supply
+Sally Beauty,5131 NC 42 Highway West,Clayton,NC,27529,35.6105854,-78.5548587,hairdresser_supply
+CosmoProf,1325 Miller Road,Greenville,NC,29607,34.822935,-82.2979966,hairdresser_supply
+Bath & Body Works,,,NC,,34.9389652,-81.9940216,cosmetics
+Sally Beauty,,,NC,,34.2459008,-77.878831,hairdresser_supply
+Fabulously Flawless Permanent Cosmetics,,,NC,,35.8578147,-78.6392422,cosmetics
+Beauty Giant,,,NC,,36.0222178,-79.8456909,hairdresser_supply
+Sally Beauty,,,NC,,35.3336378,-81.8979426,hairdresser_supply
+MAC Cosmetics,2100 Pleasant Hill Road,Duluth,GA,30096,33.9612762,-84.1276607,cosmetics
+Beauty Master,2100 Pleasant Hill Road,Duluth,GA,30096,33.9612648,-84.1245173,cosmetics
+Bath & Body Works,2001 East Dixon Boulevard,Shelby,NC,28152,35.2695634,-81.4821335,cosmetics
+Top Beauty Supply,2100 Riverside Parkway,Lawrenceville,GA,30043,33.9674182,-84.033612,beauty
+Sally Beauty,,,NC,,35.7987257,-78.5587432,hairdresser_supply
+Sally Beauty,,,NC,,33.9575796,-80.3892618,hairdresser_supply
+Marina Beauty Supply,1318 North Main Street,Fuquay-Varina,NC,27526,35.5903417,-78.7774886,beauty
+Ulta Beauty,6101 Calhoun Memorial Highway,Easley,SC,29640,34.8227038,-82.5765681,cosmetics
+C&C Beauty & Beyond,,,NC,,33.9023208,-84.1129857,hairdresser_supply
+Sally Beauty,,,NC,,35.1073391,-84.0071732,hairdresser_supply
+T&S Beuty Supply,,,NC,,33.8705714,-84.0158361,hairdresser_supply
+Sally Beauty,,,NC,,35.9041232,-78.9533415,hairdresser_supply
+Merle Norman,311 East Greer Street,Honea Path,SC,29654,34.4464998,-82.3886124,cosmetics
+Bath & Body Works,1606 Highwoods Boulevard,,NC,,36.1121493,-79.8779382,cosmetics
+Sally Beauty,,,NC,,35.0661523,-78.9521836,hairdresser_supply
+Boom Boom Beauty Supply,55 East Antrim Drive,Greenville,SC,29607,34.8415508,-82.3609991,beauty
+EZ Hair Beauty Supply,,,NC,,36.0497793,-79.8355608,hairdresser_supply
+Leena Beauty Supply,,,NC,,35.7911789,-78.5478256,beauty
+Bath & Body Works,,,NC,,36.0705629,-80.2998266,cosmetics
+Bath & Body Works,,,NC,,34.6901597,-82.989518,cosmetics
+Bath & Body Works,,,NC,,35.5296776,-82.6027558,cosmetics
+Fragrance Outlet,,,NC,,35.5298083,-82.6032562,perfumery
+Sally Beauty,6260 Bayfield Parkway,Concord,NC,28027,35.4157622,-80.6795594,hairdresser_supply
+Ulta Beauty,5336 Sunset Boulevard,Lexington,SC,29072,34.003655,-81.2091822,beauty
+Perfumania,,,NC,,33.8498379,-84.2544336,perfumery
+Bath & Body Works,,,NC,,33.8499269,-84.2554936,cosmetics
+Star Perfume,,,NC,,33.8503937,-84.2552368,perfumery
+Avon,,,NC,,33.8495209,-84.2549019,cosmetics
+Evolve Parfumery Place,,,NC,,33.8495045,-84.2549329,perfumery
+Sally Beauty,,,NC,,33.8557453,-84.2061486,hairdresser_supply
+Sephora,,,NC,,35.3700703,-80.7230284,cosmetics
+Merle Norman,,,NC,,34.122719,-80.8754947,cosmetics
+Sally Beauty,,,NC,,34.1146093,-80.8828624,hairdresser_supply
+GNC,,,NC,,35.3417174,-80.7654608,cosmetics
+Sally Beauty,,,NC,,33.9048046,-84.1206061,hairdresser_supply
+US Beauty & Wigs,,,NC,,33.9351801,-84.027908,beauty
+Perfumania,,,NC,,35.8313354,-83.5708451,perfumery
+Bath & Body Works,,,NC,,35.8318552,-83.5701465,cosmetics
+Euphoria Progressive Beauty,406 Roy Martin Road,,NC,,36.4191976,-82.4705144,cosmetics
+Sally Beauty,3370 Sugarloaf Parkway,Lawrenceville,GA,30044,33.9219487,-84.0183225,hairdresser_supply
+Bath & Body Works,1027 Spring Lane,Sanford,NC,27330,35.4840149,-79.2001335,cosmetics
+Bath & Body Works,,,NC,,33.8786286,-84.0132661,cosmetics
+Beauty In Me Boutique Beauty Supply Store,1547 East Market Street,Smithfield,NC,27577,35.5062874,-78.3297147,beauty
+My Supply Guy,3580 Breckinridge Boulevard,Duluth,GA,30096,33.9500106,-84.1267135,hairdresser_supply
+Kum's Beauty Supply,401 North Avenue,Athens,NC,30601,33.9768722,-83.3649987,beauty
+Kim's Beauty Supply,,,NC,,34.0970725,-80.9232863,beauty
+Ulta Beauty,3124 North Pleasantburg Drive,Greenville,SC,29609,34.8896817,-82.3967453,cosmetics
+Ulta Beauty,174 Brucewood Road,Southern Pines,NC,28387,35.1712841,-79.4213288,cosmetics
+RAJ Beauty Supply,3190 Atlanta Highway,Athens,NC,30606,33.9425874,-83.4475329,beauty
+Sunny Beauty Supply,4064 Lexington Road,Athens,NC,30605,33.9366951,-83.3229307,beauty
+Sephora,196 Alps Road,Athens,NC,30606,33.9470857,-83.4100224,cosmetics
+In It Beauty Supply,400 Hawthorne Avenue,Athens,NC,30606,33.9556516,-83.4116251,beauty
+Bath & Body Works,196 Alps Road,Athens,NC,30606,33.944786,-83.411019,cosmetics
+Joy Joy Beauty Supply,224 Hawthorne Avenue,Athens,NC,30606,33.9519303,-83.4097047,beauty
+Beauty World,1721 West Cumberland Street,Dunn,NC,28334,35.315927,-78.6269471,beauty
+Sally Beauty Supply,2085,,NC,,34.7807777,-77.391202,beauty
+Ulta Beauty,749 Main Street West,Oak RIdge,TN,37830,36.0102584,-84.2557544,cosmetics
+SALLY Beauty,1179 Oak Ridge Turnpike,Oak Ridge,TN,37830,36.0177022,-84.2472279,beauty
+Ulta Beauty,2059 Scenic Highway North,Snellville,GA,30078,33.8657003,-84.0179239,beauty
+Unnamed beauty store,110-K Cotton Grove Road,Lexington,NC,27292,35.8122732,-80.2609316,cosmetics
+Discount Beauty Supply,426 Saluda Street,Rock Hill,SC,29730,34.9197512,-81.0272384,hairdresser_supply
+Buff City Soap,3334 West Friendly Avenue,,NC,,36.0872697,-79.8389445,cosmetics
+Sun Beauty Supply,,,NC,,33.9376598,-84.0176333,beauty
+NU DIMENSION BEAUTY SUPPLY,6307 Burlington Road,Whitsett,NC,27377,36.0645962,-79.6076263,beauty
+Kim's Enterprises Beauty Supply,,,NC,,34.0697908,-80.9510217,cosmetics
+Ulta Beauty,2455 Market Center Drive,Clemmons,NC,27012,36.0322751,-80.3810954,beauty
+K Discount Beauty Supply,2520 Lee Avenue,Sanford,NC,27332,35.4556377,-79.1528749,beauty
+Ginaug Beauty Supply,,,NC,,33.9276454,-84.0592122,beauty
+LV Beauty Supply,,,NC,,33.9652298,-83.9856472,beauty
+Mad Flavors Beauty Supplies,2210 Statesville Boulevard,Salisbury,NC,28147,35.6960178,-80.5203775,hairdresser_supply
+Merle Norman,1945 Jake Alexander Boulevard West,Salisbury,NC,28147,35.6928166,-80.5129621,cosmetics
+Ashley Beauty Supply,225 West College Street,Warsaw,NC,28398,34.9979347,-78.0957734,beauty
+Merle Norman,,,NC,,34.2842451,-81.593029,cosmetics
+Avon,,,NC,,34.2462796,-80.6064304,cosmetics
+Cosmos Beauty Supply,,,NC,,34.2454129,-80.6068356,beauty
+bluemercury,4247 Park Road,Charlotte,NC,28209,35.1739082,-80.8480363,cosmetics
+Sally Beauty,,,NC,,36.2954668,-76.2998726,hairdresser_supply
+Venus Beauty Supply,2345 East North Street,Greenville,SC,29615,34.8702014,-82.3552424,beauty
+Newberry Beauty Supply,,,NC,,34.284646,-81.5955733,hairdresser_supply
+Beautix Beauty Supply,,,NC,,34.1886042,-84.1420488,beauty
+Ulta Beauty,3630 Peachtree Parkway,Suwanee,GA,30024,34.0691991,-84.1710867,beauty
+Sally Beauty,,,NC,,35.7168704,-84.0111252,hairdresser_supply
+Ulta Beauty,6710 Papermill Drive Northwest,Knoxville,TN,37919,35.9335979,-84.0150222,beauty
+Sally Beauty,,,NC,,36.1867159,-82.7579182,hairdresser_supply
+Bath & Body Works,861 Washington Square Mall,Washington,NC,27889,35.5596681,-77.0578174,cosmetics
+Bath & Body Works,,,NC,,33.9169739,-83.4558675,cosmetics
+CosmoProf,,,NC,,33.9369225,-83.4546767,hairdresser_supply
+Unique Beauty Supply,,,NC,,35.7319133,-78.5599601,hairdresser_supply
+Ulta Beauty,6923 Fayetteville Road,Durham,NC,27713,35.9030133,-78.936862,beauty
+Fabulous Beauty Supply 2,1459 South Boston Road,Danville,VA,24540,36.5824611,-79.3380055,cosmetics
+NC Beauty Outlet,1517 Glen School Road,,NC,,36.0273501,-78.8416154,cosmetics
+J1 Beauty Supply,10014 Albemarle Road,Charlotte,NC,28227,35.2082849,-80.6741211,beauty
+Ulta Beauty,1564 US Highway 17 North,North Myrtle Beach,SC,29582,33.841602,-78.6580163,cosmetics
+Sally Beauty,554 US Highway 17 North,North Myrtle Beach,SC,29582,33.8304576,-78.6709039,hairdresser_supply
+Sally Beauty,,,NC,,36.0031696,-79.797177,hairdresser_supply
+The Lavender Cottage & Garden,,,NC,,34.6845737,-83.6749288,cosmetics
+Bath & Body Works,,,NC,,34.0482178,-84.2941717,cosmetics
+Bath & Body Works,,,NC,,36.3327892,-78.4442987,cosmetics
+Bath & Body Works,,,NC,,36.0744366,-79.2669974,cosmetics
+Sephora,,,NC,,35.7811607,-78.7580304,cosmetics
+Gifted Cosmetics Store,,,NC,,34.0100823,-83.8231759,cosmetics
+Sally Beauty,,,NC,,33.9433394,-83.7538233,hairdresser_supply
+Bath & Body Works,,,NC,,33.9426458,-83.7507539,cosmetics
+Sally Beauty,,,NC,,34.7337262,-80.7871233,hairdresser_supply
+Ulta Beauty,713 Winfield Dunn Parkway,Sevierville,TN,37876,35.8808981,-83.5705517,beauty
+Sephora,2036 South Boulevard,Charlotte,NC,28203,35.2084514,-80.8607047,cosmetics
+Ulta Beauty,4 McKenna Road,Arden,NC,28704,35.4464274,-82.5352904,beauty
+Lush,3334 West Friendly Avenue,,NC,,36.0868481,-79.8386155,cosmetics
+Ulta Beauty,,,NC,,35.3769081,-77.9429592,beauty
+Kiehl's,,,NC,,35.2207015,-80.9421771,cosmetics
+Aloe Vera Cosmetics,101 Eagles View Ct,Easley,SC,29642,34.8092888,-82.6120515,cosmetics
+Sally Beauty,8079 Kingston Pike,Knoxville,NC,37919,35.9261034,-84.0498516,hairdresser_supply
+Sally Beauty,2633 Lawndale Drive,,NC,,36.1026424,-79.8210806,hairdresser_supply
+Sally Beauty,541 Lakeland Plaza,,NC,,34.1852544,-84.1442765,hairdresser_supply
+Bath & Body Works,,,NC,,36.058784,-79.9054457,cosmetics
+Sephora,1210 Bridford Parkway,,NC,,36.0582169,-79.9073459,cosmetics
+Kima Beauty Supply,,,NC,,36.1139576,-79.8361821,beauty
+Charm Beauty Supply,4645 West Market Street,,NC,,36.068664,-79.8661792,beauty
+Star Beauty Supply,2566 Shallowford Road Northeast,,NC,,33.8627344,-84.2884668,hairdresser_supply
+Twin's Beauty Supply,4616 West Market Street,,NC,,36.07144,-79.8635157,beauty
+Amalay Beauty Supply,,,NC,,35.1860189,-80.8761185,beauty
+Buy Wise Beauty Supply,,,NC,,35.2637631,-80.8548831,beauty
+Bath & Body Works,,,NC,,34.5391929,-82.6717621,cosmetics
+Sally Beauty,14045 Independence Boulevard,Indian Trail,NC,28079,35.0777214,-80.6532643,hairdresser_supply
+Sephora,3130 Avalon Boulevard,,NC,,34.0709786,-84.2774485,cosmetics
+Sephora,,,NC,,34.0482784,-84.293891,cosmetics
+Beauty Supply Outlet,932 Summit Avenue,,NC,,36.0844473,-79.7761088,beauty
+Sephora At Kohl’s,302 Hinton Oaks Boulevard,Knightdale,NC,27545,35.7992841,-78.5124476,cosmetics
+ArKay Beauty Supply,,,NC,,35.3108899,-80.7456029,beauty
+Ulta Beauty,11233 Parkside Drive,Knoxville,TN,37934,35.9010112,-84.1566946,cosmetics
+Beauty World Discount,3210 South Wilmington Street,Raleigh,NC,27603,35.736593,-78.651608,beauty
+Woo Skincare & Cosmetics,,,NC,,35.1739379,-80.84038,cosmetics
+Fashion News Beauty Supply,,,NC,,33.9758696,-83.3619403,beauty
+Oxford Perfume and Jewelry,,,NC,,34.2094892,-82.1782871,perfumery
+CosmoProf,,,NC,,35.1546267,-80.8752308,hairdresser_supply
+Sally Beauty,,,NC,,35.1553407,-80.8752145,hairdresser_supply
+Sally Beauty,910C North Spence Avenue,,NC,27534,35.3850569,-77.9463352,beauty
+CosmoProf,,,NC,,34.1888663,-84.1431119,hairdresser_supply
+Perfume World,,,NC,,33.8957535,-84.2814545,perfumery
+Paris Perfume,,,NC,,34.0487883,-84.2941526,perfumery
+The Cosmetics Company Store,4000 Arrowhead Boulevard,,NC,,36.0738362,-79.2668299,cosmetics
+Merle Norman,,,NC,,35.8667848,-83.5693647,cosmetics
+Bath & Body Works,,,NC,,35.885252,-83.5763203,cosmetics
+Bath & Body Works,,,NC,,34.3583084,-84.0471416,cosmetics
+Fragrance Outlet,,,NC,,34.358973,-84.0477831,perfumery
+Perfumes 4U,,,NC,,34.356255,-84.0480635,perfumery
+Sephora,,,NC,,34.3567816,-84.0489726,cosmetics
+The Cosmetics Company Store,,,NC,,34.3581049,-84.0480276,cosmetics
+Bath & Body Works,,,NC,,33.9812249,-84.0812532,cosmetics
+Ultra Beauty,640 St Mark Ave,Selma,NC,27576,35.518398,-78.2772601,cosmetics
+King's Beauty Supply,227 North Seven Oaks Drive,Knoxville,TN,37922,35.9124337,-84.1007611,beauty
+Sally Beauty,723 Leonard Avenue,Albemarle,NC,28001,35.3422787,-80.1754204,hairdresser_supply
+JC Mart Beauty Supply,1501 Julian R Allsbrook Highway,Roanoke Rapids,NC,27870,36.433388,-77.6370679,beauty
+Sarahs Beauty Supply,1802 East 10th Street,Roanoke Rapids,NC,27870,36.4370159,-77.6443281,beauty
+Luxe Fragrance Bar,219 Southside Square,,NC,,36.0657612,-79.7876587,perfumery
+W1SH - One Wish Beauty,3450 Steve Reynolds Boulevard,,NC,,33.9509652,-84.1361111,cosmetics
+So Good Bridal & Beauty Supply,,,NC,,33.9518932,-84.1391493,cosmetics
+T & S Beauty Supply,102 S Sandhills Blvd,Aberdeen,NC,28315,35.1334245,-79.4291705,beauty
+Top Beauty Supply,,,NC,,33.8893317,-84.0605543,hairdresser_supply
+Beauty World,1418 Avondale Drive,Durham,NC,27701,36.0064128,-78.8843773,beauty
+Ulta Beauty,214 Forum Drive,Columbia,SC,29229,34.1295531,-80.8765169,beauty
+Ulta Beauty,544 John Ross Parkway,Rock Hill,SC,29730,34.942184,-80.9766086,beauty
+Ulta Beauty,702 Cross Hill Road,Columbia,SC,29205,33.9931878,-80.9757698,cosmetics
+Sally Beauty,6212-108 Glenwood Avenue,,NC,,35.8574938,-78.7013315,hairdresser_supply
+K Discount Beauty Supply,4112 Pleasant Valley Road,,NC,,35.8603909,-78.7049774,hairdresser_supply
+Sally Beauty,,,NC,,35.7251083,-81.7040913,hairdresser_supply
+Queen Beauty Supply,60 Whiteville Town Center,Whiteville,NC,28472,34.3066315,-78.7189453,beauty
+Ulta Beauty,8052 Concord Mills Boulevard,Concord,NC,28027,35.37263,-80.7162453,beauty
+Top Beauty Supply,,,NC,,33.9421372,-83.9824927,beauty
+SK Beauty Supply,,,NC,,33.8731155,-84.0134919,beauty
+Ultatan,,,NC,,35.444041,-80.8638799,beauty
+Lawrenceville Beauty Supply,,,NC,,33.9583919,-83.9864591,beauty
+Ulta Beauty,2295 Market Place Boulevard,Cumming,GA,30040,34.1947894,-84.1287141,beauty
+Ulta Beauty,3070 Wake Forest Road,Raleigh,NC,27609,35.8237894,-78.6205098,beauty
+Sally Beauty,,,NC,,36.3430874,-82.4017032,hairdresser_supply
+Ulta Beauty,2626 East Stone Drive,Kingsport,TN,37660,36.5527182,-82.4923911,beauty
+Hair Guard Beauty Supply,4532 Fayetteville Road,Raeford,NC,28376,35.0055608,-79.1737299,beauty
+Sephora,3321 Pineville-Matthews Road,Charlotte,NC,28226,35.0966768,-80.7834637,cosmetics
+The Quill + Honey,18 South Main Street,,NC,,35.8267175,-82.5488112,cosmetics
+Bath & Body Works,629 River Highway,Mooresville,NC,28117,35.5938247,-80.8749855,cosmetics
+Merle Norman,,,NC,,35.6667287,-80.4703129,cosmetics
+Sally Beauty,,,NC,,34.6677453,-79.0003829,hairdresser_supply
+Ulta Beauty,840 Inspiration Drive,Wilmington,NC,28405,34.2437722,-77.830345,beauty
+Ulta Beauty,609 River Highway,Mooresville,NC,28117,35.5938332,-80.8732049,beauty
+Perfume Gallery,,,NC,,36.0676926,-80.3009489,perfumery
+Bath & Body Works,,,NC,,36.0678894,-80.3012656,cosmetics
+Ulta Beauty,1030 Hanes Mall Boulevard,Winston-Salem,NC,27103,36.0687886,-80.3188326,beauty
+Ulta Beauty,916 Loganville Highway,Bethlehem,GA,30620,33.9423304,-83.7482327,beauty
+Merle Norman,501 North Main Street,Anderson,SC,29625,34.5074598,-82.6513441,cosmetics
+Ulta Beauty,103 Commons Drive,Greenwood,SC,29649,34.204222,-82.1903308,beauty
+Merle Norman,117 West Main Street,Lake City,SC,29560,33.8731044,-79.7552564,cosmetics
+Bath & Body Works,8399 Brier Creek Parkway,,NC,,35.9066278,-78.7834724,cosmetics
+Bath & Body Works,,,NC,,34.1543359,-84.1769187,cosmetics
+Ulta Beauty,1288 Broad Street,Sumter,SC,29150,33.9551886,-80.3884579,beauty
+Ulta Beauty,7796 Charlotte Highway,Indian Land,SC,29707,34.9392979,-80.8349581,beauty
+Sally Beauty,,,NC,,33.9649871,-80.9411982,hairdresser_supply
+Ulta Beauty,1180 Blowing Rock Road,Boone,NC,28607,36.202038,-81.6674943,cosmetics
+Bath & Body Works,1180 Blowing Rock Road,Boone,NC,28607,36.2015224,-81.6677652,cosmetics
+Ulta Beauty,1844 Catawba Valley Boulevard Southeast,Hickory,NC,28602,35.7022616,-81.3089435,cosmetics
+Nile Beauty Supply,,,NC,,34.7332118,-80.7950034,beauty
+Pout,,,NC,,33.9978828,-81.0036852,cosmetics
+Sally Beauty,,,NC,,35.8226374,-84.2658174,hairdresser_supply
+Ulta Beauty,C126 Morganton Heights Boulevard,Morganton,NC,28655,35.7264037,-81.6998742,cosmetics

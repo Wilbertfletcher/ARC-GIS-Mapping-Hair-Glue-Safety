@@ -1,0 +1,15 @@
+geopandas
+pandas
+shapely
+geopy
+scikit-learn
+matplotlib
+contextily
+census
+us
+folium
+numpy
+requests
+streamlit
+# Note: the `arcgis` pip package currently fails to build in this Python 3.14 environment.
+# Use ArcGIS Pro / `arcpy` separately for the ArcGIS-specific workflow in `scripts/stores_low_income_distance.py`.

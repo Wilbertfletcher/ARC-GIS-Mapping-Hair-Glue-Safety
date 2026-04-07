@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "beauty_supply_stores",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "name": "Beauty World", "address": "123 Main St", "city": "Durham", "state": "NC", "zip": 27701, "lat": 36.0015, "lon": -78.905, "category": "beauty_supply", "store_id": 1 }, "geometry": { "type": "Point", "coordinates": [ -78.905, 36.0015 ] } },
+{ "type": "Feature", "properties": { "name": "Crown Beauty", "address": "245 Roxboro St", "city": "Durham", "state": "NC", "zip": 27701, "lat": 35.9942, "lon": -78.8986, "category": "beauty_supply", "store_id": 2 }, "geometry": { "type": "Point", "coordinates": [ -78.8986, 35.9942 ] } },
+{ "type": "Feature", "properties": { "name": "Wig Central", "address": "811 Fayetteville St", "city": "Durham", "state": "NC", "zip": 27707, "lat": 35.9788, "lon": -78.8995, "category": "wig_beauty", "store_id": 3 }, "geometry": { "type": "Point", "coordinates": [ -78.8995, 35.9788 ] } }
+]
+}

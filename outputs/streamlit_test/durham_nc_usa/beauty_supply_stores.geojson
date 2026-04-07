@@ -1,0 +1,15 @@
+{
+"type": "FeatureCollection",
+"name": "beauty_supply_stores",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "name": "Merle Norman", "address": "4011 Durham Chapel Hill Boulevard", "city": "Durham", "state": "NC", "zip": "27707", "lat": 35.9667623, "lon": -78.9575462, "category": "beauty", "store_id": 1 }, "geometry": { "type": "Point", "coordinates": [ -78.9575462, 35.9667623 ] } },
+{ "type": "Feature", "properties": { "name": "Sally Beauty", "address": "", "city": "Durham", "state": "NC", "zip": "", "lat": 35.9063291, "lon": -78.7850492, "category": "hairdresser_supply", "store_id": 2 }, "geometry": { "type": "Point", "coordinates": [ -78.7850492, 35.9063291 ] } },
+{ "type": "Feature", "properties": { "name": "CosmoProf", "address": "4600 Durham Chapel Hill Boulevard", "city": "Durham", "state": "NC", "zip": "27707", "lat": 35.9627599, "lon": -78.9781849, "category": "beauty", "store_id": 3 }, "geometry": { "type": "Point", "coordinates": [ -78.9781849, 35.9627599 ] } },
+{ "type": "Feature", "properties": { "name": "Sally Beauty", "address": "", "city": "Durham", "state": "NC", "zip": "", "lat": 35.9041232, "lon": -78.9533415, "category": "hairdresser_supply", "store_id": 4 }, "geometry": { "type": "Point", "coordinates": [ -78.9533415, 35.9041232 ] } },
+{ "type": "Feature", "properties": { "name": "Ulta Beauty", "address": "6923 Fayetteville Road", "city": "Durham", "state": "NC", "zip": "27713", "lat": 35.9030133, "lon": -78.936862, "category": "beauty", "store_id": 5 }, "geometry": { "type": "Point", "coordinates": [ -78.936862, 35.9030133 ] } },
+{ "type": "Feature", "properties": { "name": "NC Beauty Outlet", "address": "1517 Glen School Road", "city": "Durham", "state": "NC", "zip": "", "lat": 36.0273501, "lon": -78.8416154, "category": "cosmetics", "store_id": 6 }, "geometry": { "type": "Point", "coordinates": [ -78.8416154, 36.0273501 ] } },
+{ "type": "Feature", "properties": { "name": "Beauty World", "address": "1418 Avondale Drive", "city": "Durham", "state": "NC", "zip": "27701", "lat": 36.0064128, "lon": -78.8843773, "category": "beauty", "store_id": 7 }, "geometry": { "type": "Point", "coordinates": [ -78.8843773, 36.006412799999985 ] } },
+{ "type": "Feature", "properties": { "name": "Bath & Body Works", "address": "8399 Brier Creek Parkway", "city": "Durham", "state": "NC", "zip": "", "lat": 35.9066278, "lon": -78.7834724, "category": "cosmetics", "store_id": 8 }, "geometry": { "type": "Point", "coordinates": [ -78.7834724, 35.9066278 ] } }
+]
+}

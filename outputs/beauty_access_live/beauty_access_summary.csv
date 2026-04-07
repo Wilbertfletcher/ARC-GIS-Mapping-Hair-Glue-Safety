@@ -1,0 +1,4 @@
+GEOID,NAME,total_pop,black_pop,pct_black,median_income,poverty_rate,low_income,nearest_store_km,store_count_5km,service_area_pct,beauty_access_score,underserved_index,hotspot_flag,hotspot_cluster
+37063000100,,,,0.0,,,False,2.661961998591486,3,100.0,0.0,0.2,False,-1
+37063000200,Census Tract 2; Durham County; North Carolina,3381.0,830.0,24.548950014788524,91667.0,30.008904719501334,False,1.6498867583752406,3,100.0,0.8873114463176576,0.6929,False,-1
+37063000300,,,,0.0,,,False,0.8909047642832942,3,100.0,0.0,0.1,False,-1
