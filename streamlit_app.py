@@ -22,18 +22,42 @@ from scripts.beauty_supply_access_pipeline import (
 )
 
 
-def get_config_value(name: str, default: str = "") -> str:
-    value = str(os.getenv(name, "") or default or "").strip()
-    if value:
-        os.environ[name] = value
-        return value
+def get_config_value(
+    name: str,
+    default: str = "",
+    aliases: list[str] | None = None,
+) -> str:
+    candidates = [name, *(aliases or [])]
+
+    for candidate in candidates:
+        value = str(os.getenv(candidate, "") or "").strip()
+        if value:
+            os.environ[name] = value
+            return value
 
     try:
-        secret_value = st.secrets.get(name, "")
-    except Exception:
-        secret_value = ""
+        secret_sources = [st.secrets]
+        for section_name in [
+            "api",
+            "keys",
+            "credentials",
+            "general",
+            "secrets",
+        ]:
+            section = st.secrets.get(section_name, {})
+            if hasattr(section, "get"):
+                secret_sources.append(section)
 
-    value = str(secret_value or "").strip()
+        for source in secret_sources:
+            for candidate in candidates:
+                value = str(source.get(candidate, "") or "").strip()
+                if value:
+                    os.environ[name] = value
+                    return value
+    except Exception:
+        pass
+
+    value = str(default or "").strip()
     if value:
         os.environ[name] = value
     return value
@@ -360,13 +384,13 @@ CENSUS_API_KEY = get_config_value(
 EPA_USER_ID = get_config_value(
     "EPA_API_USER_ID",
     DEFAULT_EPA_USER_ID,
+    aliases=["AQS_API_EMAIL"],
 )
 EPA_API_KEY = get_config_value(
     "EPA_API_KEY",
     DEFAULT_EPA_API_KEY,
+    aliases=["AIRNOW_API_KEY"],
 )
-if not EPA_API_KEY:
-    EPA_API_KEY = get_config_value("AIRNOW_API_KEY", "")
 
 if "analysis_result" not in st.session_state:
     st.session_state["analysis_result"] = None
@@ -414,25 +438,65 @@ with st.sidebar:
         step=5000,
     )
     include_wig_shops = st.checkbox("Include wig shops", value=False)
+
+    with st.expander(
+        "API keys and cloud secrets",
+        expanded=not bool(CENSUS_API_KEY),
+    ):
+        CENSUS_API_KEY = st.text_input(
+            "Census API key",
+            value=CENSUS_API_KEY,
+            type="password",
+            help=(
+                "Required for Census demographics. On Streamlit Cloud, add it "
+                "as `CENSUS_API_KEY` in the Secrets panel."
+            ),
+        ).strip()
+        EPA_API_KEY = st.text_input(
+            "EPA / AirNow key",
+            value=EPA_API_KEY,
+            type="password",
+            help=(
+                "Optional, but needed for the air-quality overlay. Use "
+                "`EPA_API_KEY` or `AIRNOW_API_KEY` in Cloud secrets."
+            ),
+        ).strip()
+        EPA_USER_ID = st.text_input(
+            "EPA AQS user email",
+            value=EPA_USER_ID,
+            help=(
+                "Optional for AirNow, recommended for EPA AQS fallback. Use "
+                "`EPA_API_USER_ID` in Cloud secrets."
+            ),
+        ).strip()
+
+    if CENSUS_API_KEY:
+        os.environ["CENSUS_API_KEY"] = CENSUS_API_KEY
+    if EPA_API_KEY:
+        os.environ["EPA_API_KEY"] = EPA_API_KEY
+    if EPA_USER_ID:
+        os.environ["EPA_API_USER_ID"] = EPA_USER_ID
+
     air_quality_available = bool(EPA_API_KEY)
     show_air_quality = st.checkbox(
         "Overlay EPA air quality (AQI)",
         value=air_quality_available,
-        disabled=not air_quality_available,
     )
-    st.caption(
-        "Census and EPA access are configured from local `.env` values or "
-        "Streamlit Cloud secrets."
-    )
-    if air_quality_available:
-        st.caption(
-            "EPA air-quality overlay is enabled for the interactive map."
-        )
+
+    if CENSUS_API_KEY:
+        st.caption("✅ Census API key detected.")
     else:
-        st.caption(
-            "Add `CENSUS_API_KEY`, `EPA_API_KEY`, and optionally "
-            "`EPA_API_USER_ID` in Streamlit Cloud secrets to enable the live overlay."
+        st.warning(
+            "Add `CENSUS_API_KEY` in Streamlit Cloud Secrets or paste it above."
         )
+
+    if EPA_API_KEY:
+        st.caption("✅ EPA air-quality overlay is enabled.")
+    else:
+        st.info(
+            "Add `EPA_API_KEY` to enable the optional air-quality overlay."
+        )
+
     run_query = st.button("Run analysis", type="primary")
 
 st.info(
@@ -445,8 +509,20 @@ if run_query:
         st.error(
             "Please enter a U.S. city, a U.S. state, or both."
         )
+    elif not CENSUS_API_KEY:
+        st.error(
+            "Missing `CENSUS_API_KEY`. Add it in Streamlit Cloud Secrets or "
+            "paste it into the sidebar."
+        )
     else:
         try:
+            include_air_quality = bool(show_air_quality and EPA_API_KEY)
+            if show_air_quality and not EPA_API_KEY:
+                st.warning(
+                    "The EPA overlay was requested, but no `EPA_API_KEY` was "
+                    "provided, so the map will run without AQI markers."
+                )
+
             with st.spinner(
                 "Fetching tracts, Census data, beauty supply stores, and air quality..."
             ):
@@ -460,7 +536,7 @@ if run_query:
                     buffer_km=float(buffer_km),
                     low_income_threshold=float(low_income_threshold),
                     include_wig_shops=include_wig_shops,
-                    include_air_quality=show_air_quality,
+                    include_air_quality=include_air_quality,
                 )
         except Exception as exc:
             st.error(f"Analysis failed: {exc}")
