@@ -70,7 +70,7 @@ python .\scripts\stores_low_income_distance.py ^
 
 ### GeoPandas + Census pipeline
 This can run in the local project `.venv`.
-Store your Census key in `.env` as `CENSUS_API_KEY=...`, then run:
+Store your API keys in `.env` as `CENSUS_API_KEY=...` and, for the live air-quality overlay, `EPA_API_KEY=...` (or `AIRNOW_API_KEY=...`), then run:
 
 ```powershell
 python .\scripts\beauty_supply_access_pipeline.py ^
@@ -92,6 +92,31 @@ streamlit run .\streamlit_app.py --server.port 8765
 ```
 
 Then open `http://localhost:8765` in your browser.
+
+If an EPA / AirNow key is configured in `.env`, the interactive map will also overlay current AQI monitor readings on top of the existing beauty-access layers.
+
+## Streamlit Community Cloud deployment
+
+This repo is ready to deploy from GitHub on Streamlit Community Cloud.
+
+### App entry point
+- Main file: `streamlit_app.py`
+- Recommended app name: `hair-glue-safety-atlas`
+- Suggested app URL: `https://hair-glue-safety-atlas.streamlit.app`
+
+### Required Streamlit secrets
+In the Streamlit Cloud **Secrets** panel, add:
+
+```toml
+CENSUS_API_KEY = "your_census_api_key"
+EPA_API_KEY = "your_epa_or_airnow_key"
+EPA_API_USER_ID = "your_email@example.com"
+# Optional if you have a dedicated AirNow key:
+AIRNOW_API_KEY = "your_airnow_key"
+```
+
+### Python runtime
+This project includes `runtime.txt` for a Streamlit-Cloud-friendly Python version.
 
 ## Notes
 

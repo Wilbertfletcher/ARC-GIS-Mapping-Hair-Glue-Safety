@@ -1,5 +1,6 @@
 from pathlib import Path
 import html
+import os
 import re
 
 import pandas as pd
@@ -13,9 +14,29 @@ except Exception:  # pragma: no cover
 
 from scripts.beauty_supply_access_pipeline import (
     DEFAULT_CENSUS_API_KEY,
+    DEFAULT_EPA_API_KEY,
+    DEFAULT_EPA_USER_ID,
     analyze_place,
+    get_aqi_color,
     merge_geometries,
 )
+
+
+def get_config_value(name: str, default: str = "") -> str:
+    value = str(os.getenv(name, "") or default or "").strip()
+    if value:
+        os.environ[name] = value
+        return value
+
+    try:
+        secret_value = st.secrets.get(name, "")
+    except Exception:
+        secret_value = ""
+
+    value = str(secret_value or "").strip()
+    if value:
+        os.environ[name] = value
+    return value
 
 PRODUCT_BRAND_HINTS = {
     "beauty world": ["hair glue", "bonding glue", "weave", "wig"],
@@ -64,6 +85,14 @@ def format_category_label(value: object) -> str:
     if "hairdresser" in lowered or "hair dresser" in lowered:
         return "Hair Dresser"
     return normalized.title()
+
+
+def format_aqi_value(value: object) -> str:
+    try:
+        numeric = float(value)
+    except (TypeError, ValueError):
+        return "N/A"
+    return str(int(round(numeric)))
 
 
 def build_search_tags(row: pd.Series) -> str:
@@ -182,10 +211,15 @@ def render_map_legend_and_explanation() -> None:
                 background:#ffffff;"></span>
                 <span><b>Dark blue outline</b>: higher-need / underserved tract</span>
             </div>
-            <div style="display:flex;gap:0.6rem;align-items:center;">
+            <div style="display:flex;gap:0.6rem;align-items:center;margin-bottom:0.35rem;">
                 <span style="display:inline-block;width:18px;height:18px;border-radius:50%;
                 background:#1d4ed8;"></span>
                 <span><b>Blue point</b>: beauty supply location matching the filters</span>
+            </div>
+            <div style="display:flex;gap:0.6rem;align-items:center;">
+                <span style="display:inline-block;width:18px;height:18px;border-radius:50%;
+                background:linear-gradient(135deg,#00e400,#ff0000);border:1px solid #334155;"></span>
+                <span><b>Green to maroon circle</b>: live EPA AQI monitor reading</span>
             </div>
         </div>
         """,
@@ -200,6 +234,7 @@ def render_map_legend_and_explanation() -> None:
             - **Avg nearest store**: average distance from each tract center to the closest store.
             - **High-need tracts**: tracts with the highest underserved scores.
             - **Top underserved tracts**: places where lower access and higher need overlap.
+            - **EPA AQI overlay**: current air-quality readings from nearby EPA AirNow monitoring locations when a local API key is configured.
             - **Product / brand results**: stores most relevant to the chosen product category or typed brand.
             """
         )
@@ -209,6 +244,7 @@ def build_map_html(
     tracts,
     stores_table: pd.DataFrame,
     product_query: str,
+    air_quality_table: pd.DataFrame | None = None,
 ) -> str | None:
     if folium is None:
         return None
@@ -268,22 +304,77 @@ def build_map_html(
             popup="<br>".join(popup_parts),
         ).add_to(fmap)
 
+    if air_quality_table is not None and not air_quality_table.empty:
+        air_layer = folium.FeatureGroup(name="EPA Air Quality (AQI)", show=True)
+        for _, row in air_quality_table.iterrows():
+            site_name = format_text_value(
+                row.get("display_name") or row.get("site_name"),
+                fallback="Air monitor",
+            )
+            category = format_text_value(
+                row.get("aqi_category"),
+                fallback="Unknown",
+            )
+            pollutant = format_text_value(
+                row.get("parameter_name"),
+                fallback="AQI",
+            )
+            observed_at = format_text_value(
+                row.get("observed_at"),
+                fallback="Current",
+            )
+            aqi_text = format_aqi_value(row.get("aqi"))
+            popup_parts = [
+                f"<b>{html.escape(site_name)}</b>",
+                f"AQI: {html.escape(aqi_text)} ({html.escape(category)})",
+                f"Pollutant: {html.escape(pollutant)}",
+                f"Observed: {html.escape(observed_at)}",
+            ]
+            folium.CircleMarker(
+                location=[float(row["lat"]), float(row["lon"])],
+                radius=8,
+                color="#111827",
+                weight=1,
+                fill=True,
+                fill_color=get_aqi_color(row.get("aqi")),
+                fill_opacity=0.9,
+                tooltip=f"{site_name}: AQI {aqi_text} ({category})",
+                popup="<br>".join(popup_parts),
+            ).add_to(air_layer)
+        air_layer.add_to(fmap)
+
     folium.LayerControl().add_to(fmap)
     return fmap.get_root().render()
 
 
 st.set_page_config(
-    page_title="Beauty Supply Access Explorer",
+    page_title="Hair Glue Safety Atlas",
+    page_icon="🗺️",
     layout="wide",
 )
+
+CENSUS_API_KEY = get_config_value(
+    "CENSUS_API_KEY",
+    DEFAULT_CENSUS_API_KEY,
+)
+EPA_USER_ID = get_config_value(
+    "EPA_API_USER_ID",
+    DEFAULT_EPA_USER_ID,
+)
+EPA_API_KEY = get_config_value(
+    "EPA_API_KEY",
+    DEFAULT_EPA_API_KEY,
+)
+if not EPA_API_KEY:
+    EPA_API_KEY = get_config_value("AIRNOW_API_KEY", "")
 
 if "analysis_result" not in st.session_state:
     st.session_state["analysis_result"] = None
 
-st.title("Beauty Supply Access Explorer")
+st.title("Hair Glue Safety Atlas")
 st.caption(
-    "Search any U.S. city, any U.S. state, or both to map beauty supply access, "
-    "Census demographics, and underserved tracts."
+    "Explore beauty supply access, neighborhood vulnerability, and EPA air "
+    "quality overlays across U.S. communities."
 )
 
 with st.sidebar:
@@ -323,7 +414,25 @@ with st.sidebar:
         step=5000,
     )
     include_wig_shops = st.checkbox("Include wig shops", value=False)
-    st.caption("Census API access is configured securely from the local `.env` file.")
+    air_quality_available = bool(EPA_API_KEY)
+    show_air_quality = st.checkbox(
+        "Overlay EPA air quality (AQI)",
+        value=air_quality_available,
+        disabled=not air_quality_available,
+    )
+    st.caption(
+        "Census and EPA access are configured from local `.env` values or "
+        "Streamlit Cloud secrets."
+    )
+    if air_quality_available:
+        st.caption(
+            "EPA air-quality overlay is enabled for the interactive map."
+        )
+    else:
+        st.caption(
+            "Add `CENSUS_API_KEY`, `EPA_API_KEY`, and optionally "
+            "`EPA_API_USER_ID` in Streamlit Cloud secrets to enable the live overlay."
+        )
     run_query = st.button("Run analysis", type="primary")
 
 st.info(
@@ -339,16 +448,19 @@ if run_query:
     else:
         try:
             with st.spinner(
-                "Fetching tracts, Census data, and beauty supply stores..."
+                "Fetching tracts, Census data, beauty supply stores, and air quality..."
             ):
                 st.session_state["analysis_result"] = analyze_place(
                     city=city.strip(),
                     state_value=state.strip(),
                     output_dir=Path("outputs") / "streamlit_queries",
-                    census_api_key=DEFAULT_CENSUS_API_KEY,
+                    census_api_key=CENSUS_API_KEY,
+                    epa_api_key=EPA_API_KEY,
+                    epa_user_id=EPA_USER_ID,
                     buffer_km=float(buffer_km),
                     low_income_threshold=float(low_income_threshold),
                     include_wig_shops=include_wig_shops,
+                    include_air_quality=show_air_quality,
                 )
         except Exception as exc:
             st.error(f"Analysis failed: {exc}")
@@ -366,6 +478,10 @@ if result:
     )
 
     stores_table = pd.DataFrame(result["stores_table"])
+    air_quality = result.get("air_quality")
+    if air_quality is None:
+        air_quality = pd.DataFrame()
+
     category_query = PRODUCT_CATEGORY_OPTIONS.get(product_category, "")
     combined_query = " ".join(
         part for part in [category_query, product_query] if part.strip()
@@ -392,7 +508,7 @@ if result:
                 "Try a broader keyword such as `hair glue`, `wig`, or `beauty`."
             )
 
-    metric_cols = st.columns(4)
+    metric_cols = st.columns(5)
     metric_cols[0].metric("Census tracts", f"{len(tracts):,}")
     metric_cols[1].metric("Stores", f"{len(stores):,}")
     metric_cols[2].metric(
@@ -406,6 +522,26 @@ if result:
         ).sum()
     )
     metric_cols[3].metric("High-need tracts", f"{high_need_count:,}")
+    if not air_quality.empty:
+        worst_air = air_quality.sort_values("aqi", ascending=False).iloc[0]
+        metric_cols[4].metric(
+            "Highest AQI",
+            format_aqi_value(worst_air.get("aqi")),
+            format_text_value(
+                worst_air.get("aqi_category"),
+                fallback="Current",
+            ),
+        )
+        st.info(
+            f"Live EPA AQI overlay added {len(air_quality):,} monitoring locations to the map."
+        )
+    elif show_air_quality:
+        metric_cols[4].metric("Highest AQI", "No live data")
+        st.warning(
+            "The EPA air-quality overlay is enabled, but no current readings were returned for this map extent."
+        )
+    else:
+        metric_cols[4].metric("Highest AQI", "Off")
 
     render_store_cards(
         matched_stores if combined_query.strip() else searchable_stores
@@ -414,7 +550,12 @@ if result:
     st.subheader("Interactive map")
     map_col, legend_col = st.columns([3, 1.35])
     with map_col:
-        map_html = build_map_html(tracts, searchable_stores, combined_query)
+        map_html = build_map_html(
+            tracts,
+            searchable_stores,
+            combined_query,
+            air_quality_table=air_quality,
+        )
         if map_html:
             components.html(map_html, height=720, scrolling=True)
         else:
@@ -464,12 +605,35 @@ if result:
         )
     st.dataframe(table_to_show, use_container_width=True)
 
+    if not air_quality.empty:
+        st.subheader("EPA air quality observations")
+        air_quality_table = air_quality.copy()
+        st.dataframe(
+            air_quality_table[
+                [
+                    col
+                    for col in [
+                        "display_name",
+                        "state_code",
+                        "parameter_name",
+                        "aqi",
+                        "aqi_category",
+                        "observed_at",
+                        "source",
+                    ]
+                    if col in air_quality_table.columns
+                ]
+            ],
+            use_container_width=True,
+        )
+
     st.subheader("Download outputs")
-    download_cols = st.columns(4)
+    download_cols = st.columns(5)
 
     csv_path = Path(outputs["csv"])
     geojson_path = Path(outputs["geojson"])
     stores_csv_path = Path(outputs["stores_csv"])
+    air_quality_csv_path = outputs.get("air_quality_csv")
     matches_csv = table_to_show.to_csv(index=False).encode("utf-8")
 
     download_cols[0].download_button(
@@ -496,6 +660,15 @@ if result:
         file_name="matched_stores.csv",
         mime="text/csv",
     )
+    if air_quality_csv_path and Path(air_quality_csv_path).exists():
+        download_cols[4].download_button(
+            "Download AQI CSV",
+            data=Path(air_quality_csv_path).read_bytes(),
+            file_name=Path(air_quality_csv_path).name,
+            mime="text/csv",
+        )
+    else:
+        download_cols[4].caption("AQI CSV unavailable")
 
     st.caption(f"Saved outputs to: {Path(csv_path).parent}")
 else:

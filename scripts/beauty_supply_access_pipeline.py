@@ -28,6 +28,7 @@ import argparse
 import os
 import re
 import zipfile
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import geopandas as gpd
@@ -74,7 +75,7 @@ SERVICE_EXCLUDE_PATTERN = re.compile(
 
 
 def load_local_env() -> str:
-    """Load `CENSUS_API_KEY` from a project `.env` file if present."""
+    """Load project API keys from `.env` when present."""
     env_path = Path(__file__).resolve().parents[1] / ".env"
     if env_path.exists():
         for raw_line in env_path.read_text(encoding="utf-8").splitlines():
@@ -90,6 +91,14 @@ def load_local_env() -> str:
 
 
 DEFAULT_CENSUS_API_KEY = load_local_env()
+DEFAULT_EPA_USER_ID = os.getenv("EPA_API_USER_ID", "") or os.getenv(
+    "AQS_API_EMAIL",
+    "",
+)
+DEFAULT_EPA_API_KEY = os.getenv("EPA_API_KEY", "") or os.getenv(
+    "AIRNOW_API_KEY",
+    "",
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -120,6 +129,22 @@ def parse_args() -> argparse.Namespace:
         "--census_api_key",
         default=DEFAULT_CENSUS_API_KEY,
         help="Optional Census API key. Can also be set in CENSUS_API_KEY or `.env`.",
+    )
+    parser.add_argument(
+        "--epa_api_key",
+        default=DEFAULT_EPA_API_KEY,
+        help=(
+            "Optional EPA / AirNow API key for AQI overlays. "
+            "Can also be set in EPA_API_KEY or AIRNOW_API_KEY in `.env`."
+        ),
+    )
+    parser.add_argument(
+        "--epa_user_id",
+        default=DEFAULT_EPA_USER_ID,
+        help=(
+            "Optional EPA AQS user email for the AQS fallback overlay. "
+            "Can also be set in EPA_API_USER_ID or AQS_API_EMAIL in `.env`."
+        ),
     )
     parser.add_argument(
         "--acs_year",
@@ -163,6 +188,11 @@ def parse_args() -> argparse.Namespace:
         "--create_interactive_map",
         action="store_true",
         help="Also create an interactive Folium HTML map.",
+    )
+    parser.add_argument(
+        "--skip_air_quality",
+        action="store_true",
+        help="Disable the live EPA / AirNow air-quality overlay.",
     )
     return parser.parse_args()
 
@@ -714,6 +744,382 @@ def merge_geometries(geometries):
     return geometries.unary_union
 
 
+def classify_aqi_category(aqi: float) -> str:
+    if pd.isna(aqi):
+        return "Unknown"
+    aqi_value = float(aqi)
+    if aqi_value <= 50:
+        return "Good"
+    if aqi_value <= 100:
+        return "Moderate"
+    if aqi_value <= 150:
+        return "Unhealthy for Sensitive Groups"
+    if aqi_value <= 200:
+        return "Unhealthy"
+    if aqi_value <= 300:
+        return "Very Unhealthy"
+    return "Hazardous"
+
+
+def get_aqi_color(aqi: float) -> str:
+    if pd.isna(aqi):
+        return "#94a3b8"
+    aqi_value = float(aqi)
+    if aqi_value <= 50:
+        return "#00e400"
+    if aqi_value <= 100:
+        return "#ffff00"
+    if aqi_value <= 150:
+        return "#ff7e00"
+    if aqi_value <= 200:
+        return "#ff0000"
+    if aqi_value <= 300:
+        return "#8f3f97"
+    return "#7e0023"
+
+
+def extract_air_quality_category_name(value: object) -> str:
+    if isinstance(value, dict):
+        text = str(value.get("Name") or value.get("name") or "").strip()
+    else:
+        text = str(value or "").strip()
+
+    return {
+        "1": "Good",
+        "2": "Moderate",
+        "3": "Unhealthy for Sensitive Groups",
+        "4": "Unhealthy",
+        "5": "Very Unhealthy",
+        "6": "Hazardous",
+    }.get(text, text)
+
+
+def fetch_airnow_air_quality_observations(
+    west: float,
+    south: float,
+    east: float,
+    north: float,
+    epa_api_key: str = "",
+) -> pd.DataFrame:
+    columns = [
+        "site_name",
+        "display_name",
+        "parameter_name",
+        "aqi",
+        "aqi_category",
+        "lat",
+        "lon",
+        "state_code",
+        "observed_at",
+        "source",
+    ]
+    airnow_key = os.getenv("AIRNOW_API_KEY", "").strip()
+    shared_key = (epa_api_key or DEFAULT_EPA_API_KEY or "").strip()
+    api_key = airnow_key or shared_key
+    if not api_key or DEFAULT_EPA_USER_ID:
+        return pd.DataFrame(columns=columns)
+
+    west = float(west)
+    south = float(south)
+    east = float(east)
+    north = float(north)
+    pad_x = max((east - west) * 0.08, 0.15)
+    pad_y = max((north - south) * 0.08, 0.15)
+    bbox = (
+        f"{west - pad_x:.6f},{south - pad_y:.6f},"
+        f"{east + pad_x:.6f},{north + pad_y:.6f}"
+    )
+
+    end_utc = datetime.now(timezone.utc).replace(
+        minute=0,
+        second=0,
+        microsecond=0,
+    )
+    start_utc = end_utc - timedelta(hours=1)
+
+    params = {
+        "startDate": start_utc.strftime("%Y-%m-%dT%H"),
+        "endDate": end_utc.strftime("%Y-%m-%dT%H"),
+        "parameters": "PM25,OZONE,PM10",
+        "BBOX": bbox,
+        "dataType": "A",
+        "format": "application/json",
+        "verbose": 0,
+        "monitorType": 0,
+        "inclusionCriteria": 0,
+        "API_KEY": api_key,
+    }
+
+    try:
+        response = requests.get(
+            "https://www.airnowapi.org/aq/data/",
+            params=params,
+            headers=REQUEST_HEADERS,
+            timeout=120,
+        )
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        log(f"AirNow overlay unavailable: {exc}")
+        return pd.DataFrame(columns=columns)
+
+    frame = pd.DataFrame(response.json())
+    if frame.empty:
+        return pd.DataFrame(columns=columns)
+
+    frame["lat"] = pd.to_numeric(frame.get("Latitude"), errors="coerce")
+    frame["lon"] = pd.to_numeric(frame.get("Longitude"), errors="coerce")
+    frame["aqi"] = pd.to_numeric(frame.get("AQI"), errors="coerce")
+    frame = frame.dropna(subset=["lat", "lon", "aqi"]).copy()
+    if frame.empty:
+        return pd.DataFrame(columns=columns)
+
+    if "Category" in frame.columns:
+        frame["aqi_category"] = frame["Category"].apply(
+            extract_air_quality_category_name
+        )
+        missing_category = frame["aqi_category"].eq("")
+        frame.loc[missing_category, "aqi_category"] = frame.loc[
+            missing_category,
+            "aqi",
+        ].apply(classify_aqi_category)
+    else:
+        frame["aqi_category"] = frame["aqi"].apply(classify_aqi_category)
+
+    if "ParameterName" in frame.columns:
+        frame["parameter_name"] = (
+            frame["ParameterName"].fillna("AQI").astype(str)
+        )
+    else:
+        frame["parameter_name"] = "AQI"
+
+    frame["site_name"] = "Air monitor"
+    if "SiteName" in frame.columns:
+        frame["site_name"] = (
+            frame["SiteName"].fillna("Air monitor").astype(str)
+        )
+
+    frame["display_name"] = frame["site_name"]
+    if "ReportingArea" in frame.columns:
+        reporting_name = frame["ReportingArea"].fillna("").astype(str)
+        frame["display_name"] = reporting_name.where(
+            reporting_name.str.strip() != "",
+            frame["site_name"],
+        )
+
+    frame["state_code"] = ""
+    if "StateCode" in frame.columns:
+        frame["state_code"] = frame["StateCode"].fillna("").astype(str)
+
+    frame["observed_at"] = ""
+    for candidate in ["UTC", "DateObserved", "LocalTimeZone"]:
+        if candidate in frame.columns:
+            frame["observed_at"] = frame[candidate].fillna("").astype(str)
+            break
+
+    frame["source"] = "AirNow"
+    frame = frame.sort_values("aqi", ascending=False).copy()
+    frame["lat_key"] = frame["lat"].round(4)
+    frame["lon_key"] = frame["lon"].round(4)
+    frame = frame.drop_duplicates(
+        subset=["display_name", "lat_key", "lon_key"],
+        keep="first",
+    )
+
+    return frame[columns].reset_index(drop=True)
+
+
+def fetch_aqs_air_quality_observations(
+    west: float,
+    south: float,
+    east: float,
+    north: float,
+    epa_user_id: str = "",
+    epa_api_key: str = "",
+) -> pd.DataFrame:
+    columns = [
+        "site_name",
+        "display_name",
+        "parameter_name",
+        "aqi",
+        "aqi_category",
+        "lat",
+        "lon",
+        "state_code",
+        "observed_at",
+        "source",
+    ]
+    email = (epa_user_id or DEFAULT_EPA_USER_ID or "").strip()
+    api_key = (epa_api_key or DEFAULT_EPA_API_KEY or "").strip()
+    if not email or not api_key:
+        return pd.DataFrame(columns=columns)
+
+    frame = pd.DataFrame()
+    for lookback_days in [30, 90, 180, 365, 540]:
+        end_day = datetime.now(timezone.utc).date() - timedelta(days=lookback_days)
+        start_day = end_day - timedelta(days=6)
+        params = {
+            "email": email,
+            "key": api_key,
+            "param": "88101,88502,44201,81102",
+            "bdate": start_day.strftime("%Y%m%d"),
+            "edate": end_day.strftime("%Y%m%d"),
+            "minlat": float(south),
+            "maxlat": float(north),
+            "minlon": float(west),
+            "maxlon": float(east),
+        }
+
+        try:
+            response = requests.get(
+                "https://aqs.epa.gov/data/api/dailyData/byBox",
+                params=params,
+                headers=REQUEST_HEADERS,
+                timeout=120,
+            )
+            response.raise_for_status()
+        except requests.RequestException as exc:
+            log(f"EPA AQS overlay unavailable: {exc}")
+            return pd.DataFrame(columns=columns)
+
+        payload = response.json()
+        body = payload.get("Data") or payload.get("Body") or []
+        if body:
+            frame = pd.DataFrame(body)
+            break
+
+    if frame.empty:
+        return pd.DataFrame(columns=columns)
+
+    frame["lat"] = pd.to_numeric(frame.get("latitude"), errors="coerce")
+    frame["lon"] = pd.to_numeric(frame.get("longitude"), errors="coerce")
+    frame["aqi"] = pd.to_numeric(frame.get("aqi"), errors="coerce")
+    frame = frame.dropna(subset=["lat", "lon", "aqi"]).copy()
+    if frame.empty:
+        return pd.DataFrame(columns=columns)
+
+    frame["aqi_category"] = frame["aqi"].apply(classify_aqi_category)
+
+    if "parameter_name" in frame.columns:
+        frame["parameter_name"] = (
+            frame["parameter_name"].fillna("AQI").astype(str)
+        )
+    else:
+        frame["parameter_name"] = "AQI"
+
+    if "local_site_name" in frame.columns:
+        frame["site_name"] = (
+            frame["local_site_name"].fillna("Air monitor").astype(str)
+        )
+    else:
+        frame["site_name"] = "Air monitor"
+
+    if "city" in frame.columns:
+        frame["display_name"] = frame["city"].fillna(frame["site_name"])
+        frame["display_name"] = frame["display_name"].astype(str)
+    else:
+        frame["display_name"] = frame["site_name"]
+
+    if "state_code" in frame.columns:
+        frame["state_code"] = frame["state_code"].fillna("").astype(str)
+    else:
+        frame["state_code"] = ""
+
+    if "date_local" in frame.columns:
+        frame["observed_at"] = frame["date_local"].fillna("").astype(str)
+    else:
+        frame["observed_at"] = ""
+
+    frame["source"] = "EPA AQS"
+
+    frame = frame.sort_values(
+        ["observed_at", "aqi"],
+        ascending=[False, False],
+    ).copy()
+    frame["lat_key"] = frame["lat"].round(4)
+    frame["lon_key"] = frame["lon"].round(4)
+    frame = frame.drop_duplicates(
+        subset=["display_name", "lat_key", "lon_key"],
+        keep="first",
+    )
+
+    return frame[columns].reset_index(drop=True)
+
+
+def fetch_air_quality_observations(
+    west: float,
+    south: float,
+    east: float,
+    north: float,
+    epa_api_key: str = "",
+    epa_user_id: str = "",
+) -> pd.DataFrame:
+    airnow = fetch_airnow_air_quality_observations(
+        west=west,
+        south=south,
+        east=east,
+        north=north,
+        epa_api_key=epa_api_key,
+    )
+    if not airnow.empty:
+        return airnow
+
+    return fetch_aqs_air_quality_observations(
+        west=west,
+        south=south,
+        east=east,
+        north=north,
+        epa_user_id=epa_user_id,
+        epa_api_key=epa_api_key,
+    )
+
+
+def add_air_quality_overlay(
+    fmap,
+    air_quality: pd.DataFrame | None,
+) -> None:
+    if folium is None or air_quality is None or air_quality.empty:
+        return
+
+    air_layer = folium.FeatureGroup(name="EPA Air Quality (AQI)", show=True)
+    for _, row in air_quality.iterrows():
+        site_name = str(
+            row.get("display_name") or row.get("site_name") or "Air monitor"
+        )
+        category = str(
+            row.get("aqi_category") or classify_aqi_category(row.get("aqi"))
+        )
+        parameter_name = str(row.get("parameter_name") or "AQI")
+        aqi_value = row.get("aqi")
+        aqi_text = (
+            str(int(round(float(aqi_value)))) if pd.notna(aqi_value) else "N/A"
+        )
+        state_code = str(row.get("state_code") or "")
+        popup_html = "<br>".join(
+            [
+                f"<b>{site_name}</b>",
+                f"AQI: {aqi_text} ({category})",
+                f"Pollutant: {parameter_name}",
+                f"State: {state_code or 'N/A'}",
+                f"Observed: {row.get('observed_at') or 'Current'}",
+                f"Source: {row.get('source') or 'EPA'}",
+            ]
+        )
+
+        folium.CircleMarker(
+            location=[float(row["lat"]), float(row["lon"])],
+            radius=8,
+            color="#111827",
+            weight=1,
+            fill=True,
+            fill_color=get_aqi_color(row.get("aqi")),
+            fill_opacity=0.9,
+            tooltip=f"{site_name}: AQI {aqi_text} ({category})",
+            popup=popup_html,
+        ).add_to(air_layer)
+
+    air_layer.add_to(fmap)
+
+
 def compute_access_metrics(
     tracts: gpd.GeoDataFrame,
     stores: gpd.GeoDataFrame,
@@ -845,6 +1251,7 @@ def create_interactive_map(
     tracts: gpd.GeoDataFrame,
     stores: gpd.GeoDataFrame,
     html_path: Path,
+    air_quality: pd.DataFrame | None = None,
 ) -> None:
     if folium is None:
         return
@@ -870,7 +1277,10 @@ def create_interactive_map(
         legend_name="% African American",
     ).add_to(fmap)
 
-    high_need = tracts_ll[tracts_ll["underserved_index"] >= tracts_ll["underserved_index"].quantile(0.75)]
+    high_need = tracts_ll[
+        tracts_ll["underserved_index"]
+        >= tracts_ll["underserved_index"].quantile(0.75)
+    ]
     if not high_need.empty:
         folium.GeoJson(
             high_need.to_json(),
@@ -893,6 +1303,7 @@ def create_interactive_map(
             popup=label,
         ).add_to(fmap)
 
+    add_air_quality_overlay(fmap, air_quality)
     folium.LayerControl().add_to(fmap)
     fmap.save(str(html_path))
 
@@ -902,7 +1313,8 @@ def save_outputs(
     stores: gpd.GeoDataFrame,
     output_dir: Path,
     create_html: bool,
-) -> dict[str, Path]:
+    air_quality: pd.DataFrame | None = None,
+) -> dict[str, Path | None]:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     geojson_path = output_dir / "beauty_access_enriched.geojson"
@@ -910,6 +1322,7 @@ def save_outputs(
     png_path = output_dir / "beauty_access_map.png"
     stores_geojson_path = output_dir / "beauty_supply_stores.geojson"
     html_path = output_dir / "beauty_access_map.html"
+    air_quality_csv_path = output_dir / "epa_air_quality_latest.csv"
 
     tracts_out = tracts.to_crs(epsg=4326)
     stores_out = stores.to_crs(epsg=4326)
@@ -940,9 +1353,19 @@ def save_outputs(
     ]
     tracts_out[summary_cols].to_csv(csv_path, index=False)
 
+    if air_quality is not None and not air_quality.empty:
+        air_quality.to_csv(air_quality_csv_path, index=False)
+    else:
+        air_quality_csv_path = None
+
     create_static_map(tracts, stores, png_path)
     if create_html:
-        create_interactive_map(tracts, stores, html_path)
+        create_interactive_map(
+            tracts,
+            stores,
+            html_path,
+            air_quality=air_quality,
+        )
 
     return {
         "geojson": geojson_path,
@@ -950,6 +1373,7 @@ def save_outputs(
         "png": png_path,
         "stores_geojson": stores_geojson_path,
         "html": html_path if create_html else None,
+        "air_quality_csv": air_quality_csv_path,
     }
 
 
@@ -958,10 +1382,13 @@ def analyze_place(
     state_value: str,
     output_dir: str | Path,
     census_api_key: str = "",
+    epa_api_key: str = DEFAULT_EPA_API_KEY,
+    epa_user_id: str = DEFAULT_EPA_USER_ID,
     acs_year: int = 2022,
     buffer_km: float = 5.0,
     low_income_threshold: float = 40000.0,
     include_wig_shops: bool = False,
+    include_air_quality: bool = True,
 ) -> dict:
     city = (city or "").strip()
     state_value = (state_value or "").strip()
@@ -1000,6 +1427,17 @@ def analyze_place(
     )
     stores["store_id"] = np.arange(1, len(stores) + 1)
 
+    air_quality = pd.DataFrame()
+    if include_air_quality:
+        air_quality = fetch_air_quality_observations(
+            west=west,
+            south=south,
+            east=east,
+            north=north,
+            epa_api_key=epa_api_key,
+            epa_user_id=epa_user_id,
+        )
+
     metric_crs = choose_metric_crs(tracts, "auto")
     tracts_proj = tracts.to_crs(metric_crs)
     stores_proj = stores.to_crs(metric_crs)
@@ -1021,6 +1459,7 @@ def analyze_place(
         stores_proj,
         output_dir=result_dir,
         create_html=True,
+        air_quality=air_quality,
     )
     outputs["stores_csv"] = stores_csv_path
 
@@ -1029,6 +1468,7 @@ def analyze_place(
         "tracts": tracts_proj,
         "stores": stores_proj,
         "stores_table": stores_df,
+        "air_quality": air_quality,
         "outputs": outputs,
     }
 
@@ -1072,11 +1512,24 @@ def main() -> None:
     log("Clustering underserved hotspots...")
     tracts_proj = cluster_hotspots(tracts_proj, buffer_km=args.buffer_km)
 
+    air_quality = pd.DataFrame()
+    if not args.skip_air_quality:
+        west, south, east, north = tracts.to_crs(epsg=4326).total_bounds
+        air_quality = fetch_air_quality_observations(
+            west=west,
+            south=south,
+            east=east,
+            north=north,
+            epa_api_key=args.epa_api_key,
+            epa_user_id=args.epa_user_id,
+        )
+
     outputs = save_outputs(
         tracts_proj,
         stores_proj,
         output_dir=output_dir,
         create_html=args.create_interactive_map,
+        air_quality=air_quality,
     )
 
     print("\n=== Outputs ===")
