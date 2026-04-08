@@ -439,37 +439,6 @@ with st.sidebar:
     )
     include_wig_shops = st.checkbox("Include wig shops", value=False)
 
-    with st.expander(
-        "API keys and cloud secrets",
-        expanded=not bool(CENSUS_API_KEY),
-    ):
-        CENSUS_API_KEY = st.text_input(
-            "Census API key",
-            value=CENSUS_API_KEY,
-            type="password",
-            help=(
-                "Required for Census demographics. On Streamlit Cloud, add it "
-                "as `CENSUS_API_KEY` in the Secrets panel."
-            ),
-        ).strip()
-        EPA_API_KEY = st.text_input(
-            "EPA / AirNow key",
-            value=EPA_API_KEY,
-            type="password",
-            help=(
-                "Optional, but needed for the air-quality overlay. Use "
-                "`EPA_API_KEY` or `AIRNOW_API_KEY` in Cloud secrets."
-            ),
-        ).strip()
-        EPA_USER_ID = st.text_input(
-            "EPA AQS user email",
-            value=EPA_USER_ID,
-            help=(
-                "Optional for AirNow, recommended for EPA AQS fallback. Use "
-                "`EPA_API_USER_ID` in Cloud secrets."
-            ),
-        ).strip()
-
     if CENSUS_API_KEY:
         os.environ["CENSUS_API_KEY"] = CENSUS_API_KEY
     if EPA_API_KEY:
@@ -484,17 +453,19 @@ with st.sidebar:
     )
 
     if CENSUS_API_KEY:
-        st.caption("✅ Census API key detected.")
+        st.caption("✅ Secure Census access detected.")
     else:
         st.warning(
-            "Add `CENSUS_API_KEY` in Streamlit Cloud Secrets or paste it above."
+            "Missing secure Census configuration. Add `CENSUS_API_KEY` in "
+            "Streamlit Cloud Secrets."
         )
 
     if EPA_API_KEY:
-        st.caption("✅ EPA air-quality overlay is enabled.")
+        st.caption("✅ Secure EPA air-quality access detected.")
     else:
         st.info(
-            "Add `EPA_API_KEY` to enable the optional air-quality overlay."
+            "Optional EPA overlay is unavailable until `EPA_API_KEY` is set "
+            "in Streamlit Cloud Secrets."
         )
 
     run_query = st.button("Run analysis", type="primary")

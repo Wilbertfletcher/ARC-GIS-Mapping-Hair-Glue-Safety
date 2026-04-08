@@ -105,7 +105,7 @@ This repo is ready to deploy from GitHub on Streamlit Community Cloud.
 - Suggested app URL: `https://hair-glue-safety-atlas.streamlit.app`
 
 ### Required Streamlit secrets
-In the Streamlit Cloud **Secrets** panel, add:
+In the Streamlit Cloud **Secrets** panel, add these values there only. The dashboard does **not** expose editable API key inputs.
 
 ```toml
 CENSUS_API_KEY = "your_census_api_key"
