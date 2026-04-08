@@ -482,8 +482,8 @@ if run_query:
         )
     elif not CENSUS_API_KEY:
         st.error(
-            "Missing `CENSUS_API_KEY`. Add it in Streamlit Cloud Secrets or "
-            "paste it into the sidebar."
+            "Missing `CENSUS_API_KEY`. Add it in Streamlit Cloud Secrets, "
+            "save, and reboot the app."
         )
     else:
         try:
