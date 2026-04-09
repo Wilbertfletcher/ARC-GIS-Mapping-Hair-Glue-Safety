@@ -1,0 +1,2 @@
+site_name,display_name,parameter_name,aqi,aqi_category,lat,lon,state_code,observed_at,source
+Mendenhall School,Greensboro,AQI,30.0,Good,36.109006,-79.802314,37,2025-10-10,EPA AQS

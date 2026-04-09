@@ -816,7 +816,7 @@ def fetch_airnow_air_quality_observations(
     airnow_key = os.getenv("AIRNOW_API_KEY", "").strip()
     shared_key = (epa_api_key or DEFAULT_EPA_API_KEY or "").strip()
     api_key = airnow_key or shared_key
-    if not api_key or DEFAULT_EPA_USER_ID:
+    if not api_key:
         return pd.DataFrame(columns=columns)
 
     west = float(west)

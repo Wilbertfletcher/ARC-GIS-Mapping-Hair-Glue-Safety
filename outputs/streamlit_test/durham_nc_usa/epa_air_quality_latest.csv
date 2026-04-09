@@ -1,0 +1,2 @@
+site_name,display_name,parameter_name,aqi,aqi_category,lat,lon,state_code,observed_at,source
+Durham Armory,Durham,AQI,35.0,Good,36.032955,-78.904037,37,2025-10-10,EPA AQS
