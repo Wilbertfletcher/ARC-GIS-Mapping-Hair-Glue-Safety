@@ -185,7 +185,7 @@ def filter_stores_for_search(
 
 def render_store_cards(stores_table: pd.DataFrame) -> None:
     if stores_table.empty:
-        st.warning("No stores matched the current search.")
+        st.info("No stores matched the current filters — try broadening your search.")
         return
 
     st.markdown("### Highlighted results")
@@ -476,27 +476,18 @@ st.info(
 )
 
 if run_query:
+    st.session_state["analysis_result"] = None
     if not city.strip() and not state.strip():
-        st.error(
-            "Please enter a U.S. city, a U.S. state, or both."
-        )
+        st.error("Enter a U.S. city, state, or both to run the analysis.")
     elif not CENSUS_API_KEY:
-        st.error(
-            "Missing `CENSUS_API_KEY`. Add it in Streamlit Cloud Secrets, "
-            "save, and reboot the app."
-        )
+        st.error("Census API key is missing — add `CENSUS_API_KEY` to Streamlit Cloud Secrets and reboot.")
     else:
         try:
             include_air_quality = bool(show_air_quality and EPA_API_KEY)
             if show_air_quality and not EPA_API_KEY:
-                st.warning(
-                    "The EPA overlay was requested, but no `EPA_API_KEY` was "
-                    "provided, so the map will run without AQI markers."
-                )
+                st.warning("EPA_API_KEY not set — map will load without AQI markers.")
 
-            with st.spinner(
-                "Fetching tracts, Census data, beauty supply stores, and air quality..."
-            ):
+            with st.spinner("Fetching tracts, stores, and demographics…"):
                 st.session_state["analysis_result"] = analyze_place(
                     city=city.strip(),
                     state_value=state.strip(),
@@ -510,8 +501,8 @@ if run_query:
                     include_air_quality=include_air_quality,
                 )
         except Exception as exc:
-            st.error(f"Analysis failed: {exc}")
-            st.exception(exc)
+            st.session_state["analysis_result"] = None
+            st.error(f"Analysis failed — {exc}")
 
 result = st.session_state.get("analysis_result")
 
@@ -545,15 +536,10 @@ if result:
 
     if combined_query.strip():
         search_label = product_query.strip() or product_category
-        st.info(
-            f"Search for `{search_label}` matched {len(matched_stores):,} "
-            "stores in the current results."
-        )
         if matched_stores.empty:
-            st.warning(
-                "No current stores matched that brand/product term. "
-                "Try a broader keyword such as `hair glue`, `wig`, or `beauty`."
-            )
+            st.info(f"No stores matched \"{search_label}\" — try a broader term like `hair glue`, `wig`, or `beauty`.")
+        else:
+            st.info(f"Search for \"{search_label}\" matched {len(matched_stores):,} store(s).")
 
     metric_cols = st.columns(5)
     metric_cols[0].metric("Census tracts", f"{len(tracts):,}")
