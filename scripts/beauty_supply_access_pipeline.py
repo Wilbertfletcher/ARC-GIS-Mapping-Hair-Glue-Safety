@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import os
 import re
+import time
 import zipfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -474,7 +475,7 @@ def fetch_osm_beauty_supply_stores(
     beauty_name_pattern = "Beauty|Supply|Cosmo|Sally|Ulta|Merle|Outlet|Wig"
 
     elements = []
-    errors = []
+    last_error = ""
     overpass_endpoints = [
         "https://overpass-api.de/api/interpreter",
         "https://lz4.overpass-api.de/api/interpreter",
@@ -492,19 +493,28 @@ def fetch_osm_beauty_supply_stores(
 
     for overpass_query in query_candidates:
         for endpoint in overpass_endpoints:
-            try:
-                response = requests.get(
-                    endpoint,
-                    params={"data": overpass_query},
-                    headers=REQUEST_HEADERS,
-                    timeout=120,
-                )
-                response.raise_for_status()
-                elements = response.json().get("elements", [])
-                if elements:
+            for attempt in range(3):
+                try:
+                    response = requests.get(
+                        endpoint,
+                        params={"data": overpass_query},
+                        headers=REQUEST_HEADERS,
+                        timeout=120,
+                    )
+                    if response.status_code == 429:
+                        wait = 10 * (attempt + 1)
+                        log(f"Overpass rate-limited, waiting {wait}s before retry…")
+                        time.sleep(wait)
+                        continue
+                    response.raise_for_status()
+                    elements = response.json().get("elements", [])
                     break
-            except requests.RequestException as exc:
-                errors.append(f"{endpoint}: {exc}")
+                except requests.RequestException as exc:
+                    last_error = str(exc).split("for url:")[0].strip().rstrip(":")
+                    if attempt < 2:
+                        time.sleep(5 * (attempt + 1))
+            if elements:
+                break
         if elements:
             break
 
@@ -546,10 +556,10 @@ def fetch_osm_beauty_supply_stores(
 
     stores = pd.DataFrame(rows)
     if stores.empty:
-        error_text = "; ".join(errors) if errors else "No rows returned"
+        hint = f" ({last_error})" if last_error else ""
         raise ValueError(
-            f"No beauty supply store records were returned for {place_query}. "
-            f"Details: {error_text}"
+            f"No beauty supply stores found for {place_query}{hint}. "
+            "The area may have no tagged stores in OpenStreetMap, or the map service is temporarily busy — try again in a moment."
         )
     return filter_beauty_supply_locations(
         stores,
