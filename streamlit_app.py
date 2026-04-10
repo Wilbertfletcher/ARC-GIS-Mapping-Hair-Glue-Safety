@@ -22,6 +22,32 @@ from scripts.beauty_supply_access_pipeline import (
 )
 
 
+@st.cache_data(ttl=3600, show_spinner=False)
+def cached_analyze_place(
+    city: str,
+    state_value: str,
+    census_api_key: str,
+    epa_api_key: str,
+    epa_user_id: str,
+    buffer_km: float,
+    low_income_threshold: float,
+    include_wig_shops: bool,
+    include_air_quality: bool,
+) -> dict:
+    return analyze_place(
+        city=city,
+        state_value=state_value,
+        output_dir=Path("outputs") / "streamlit_queries",
+        census_api_key=census_api_key,
+        epa_api_key=epa_api_key,
+        epa_user_id=epa_user_id,
+        buffer_km=buffer_km,
+        low_income_threshold=low_income_threshold,
+        include_wig_shops=include_wig_shops,
+        include_air_quality=include_air_quality,
+    )
+
+
 def get_config_value(
     name: str,
     default: str = "",
@@ -488,10 +514,9 @@ if run_query:
                 st.warning("EPA_API_KEY not set — map will load without AQI markers.")
 
             with st.spinner("Fetching tracts, stores, and demographics…"):
-                st.session_state["analysis_result"] = analyze_place(
+                st.session_state["analysis_result"] = cached_analyze_place(
                     city=city.strip(),
                     state_value=state.strip(),
-                    output_dir=Path("outputs") / "streamlit_queries",
                     census_api_key=CENSUS_API_KEY,
                     epa_api_key=EPA_API_KEY,
                     epa_user_id=EPA_USER_ID,

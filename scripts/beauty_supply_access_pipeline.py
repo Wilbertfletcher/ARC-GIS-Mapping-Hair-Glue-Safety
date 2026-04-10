@@ -25,6 +25,8 @@ Example:
 from __future__ import annotations
 
 import argparse
+import hashlib
+import json
 import os
 import re
 import time
@@ -200,6 +202,35 @@ def parse_args() -> argparse.Namespace:
 
 def log(message: str) -> None:
     print(message)
+
+
+_CACHE_DIR = Path("outputs/cache")
+
+
+def _cache_key(*parts: object) -> str:
+    raw = json.dumps(parts, sort_keys=True, default=str)
+    return hashlib.md5(raw.encode()).hexdigest()
+
+
+def _read_cache(key: str, max_age_hours: float) -> pd.DataFrame | None:
+    path = _CACHE_DIR / f"{key}.parquet"
+    if not path.exists():
+        return None
+    age_hours = (time.time() - path.stat().st_mtime) / 3600
+    if age_hours > max_age_hours:
+        return None
+    try:
+        return pd.read_parquet(path)
+    except Exception:
+        return None
+
+
+def _write_cache(key: str, frame: pd.DataFrame) -> None:
+    try:
+        _CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        frame.to_parquet(_CACHE_DIR / f"{key}.parquet", index=False)
+    except Exception:
+        pass
 
 
 def ensure_output_dir(path: str | Path) -> Path:
@@ -465,6 +496,12 @@ def fetch_osm_beauty_supply_stores(
     place: dict | None = None,
 ) -> pd.DataFrame:
     place_query = build_place_query(city=city, state_value=state_value)
+    cache_key = _cache_key("osm_stores", place_query, include_wig_shops)
+    cached = _read_cache(cache_key, max_age_hours=6)
+    if cached is not None:
+        log(f"OSM stores loaded from cache for {place_query}.")
+        return cached
+
     place = place or fetch_place_record(place_query)
     south, north, west, east = place["boundingbox"]
 
@@ -561,10 +598,9 @@ def fetch_osm_beauty_supply_stores(
             f"No beauty supply stores found for {place_query}{hint}. "
             "The area may have no tagged stores in OpenStreetMap, or the map service is temporarily busy — try again in a moment."
         )
-    return filter_beauty_supply_locations(
-        stores,
-        include_wig_shops=include_wig_shops,
-    )
+    result = filter_beauty_supply_locations(stores, include_wig_shops=include_wig_shops)
+    _write_cache(cache_key, result)
+    return result
 
 
 def fetch_census_demographics(
@@ -572,6 +608,12 @@ def fetch_census_demographics(
     acs_year: int,
     census_api_key: str = "",
 ) -> pd.DataFrame:
+    cache_key = _cache_key("census", state_value, acs_year)
+    cached = _read_cache(cache_key, max_age_hours=24 * 30)
+    if cached is not None:
+        log(f"Census demographics loaded from cache for {state_value}.")
+        return cached
+
     state_fips = resolve_state_fips(state_value)
     fields = ",".join(["NAME", *ACS_FIELDS.keys()])
     url = f"https://api.census.gov/data/{acs_year}/acs/acs5"
@@ -601,7 +643,9 @@ def fetch_census_demographics(
         frame["median_income"] >= 0,
         np.nan,
     )
-    return frame[["GEOID", "NAME", *ACS_FIELDS.values()]].copy()
+    result = frame[["GEOID", "NAME", *ACS_FIELDS.values()]].copy()
+    _write_cache(cache_key, result)
+    return result
 
 
 def attach_demographics(
