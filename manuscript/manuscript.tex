@@ -1,263 +1,444 @@
-\documentclass[12pt,a4paper]{article}
+\documentclass[12pt,letterpaper]{article}
 
-\usepackage[utf-8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
 \usepackage[margin=1in]{geometry}
 \usepackage{graphicx}
 \usepackage{natbib}
 \usepackage{amsmath}
 \usepackage{amssymb}
+\usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{fancyhdr}
 \usepackage{setspace}
 \usepackage{float}
 \usepackage{caption}
-\usepackage{subcaption}
+\usepackage[expansion=false]{microtype}
 
-% Set line spacing to 1.5
 \onehalfspacing
 
-% Header and footer
 \pagestyle{fancy}
 \fancyhf{}
 \rhead{\thepage}
-\lhead{ARC-GIS Mapping of Hair Glue Safety}
+\lhead{Geospatial Mapping of Beauty-Supply Retail Access, North Carolina}
 
-% Title, Author, Abstract setup
-\title{Spatial Risk Assessment and Geospatial Mapping of Hair Adhesive Product Safety: An Application of ARC-GIS Technology for Occupational and Domestic Exposure Analysis}
+% ---------------------------------------------------------------------------
+% NOTE (not part of the paper): every number in this draft is computed from
+% this repository's own output GeoJSON/CSV files by scripts/ plus the
+% reproducible analysis in manuscript/analysis/. See MANUSCRIPT_REBUILD_NOTES.md
+% for provenance of each figure. Affiliations and acknowledgments are marked
+% [CONFIRM] where they need the authors' input.
+% ---------------------------------------------------------------------------
 
-\author{Wilbert J. Fletcher$^{1,*}$, Jonathan Schultz$^{2}$, Timothy Mulrooney$^{3}$ \\
-$^{1}$Department of Geographic Information Systems, Institution Name \\
-$^{2}$Department of Occupational Health and Safety, Institution Name \\
-$^{3}$Department of Public Health, Institution Name \\
-$^{*}$Corresponding author: \texttt{wilbert.fletcher@institution.edu}}
+\title{Mapping Beauty-Supply Retail Access as an Exposure-Opportunity Proxy
+for Hair-Adhesive Products: A Census-Tract Geospatial Analysis of
+North Carolina}
+
+\author{
+  Wilbert J. Fletcher III$^{1,*}$,
+  Jonathan Schultz$^{2}$,
+  Timothy Mulrooney$^{1}$ \\[4pt]
+  \small $^{1}$Department of Environmental, Earth and Geospatial Sciences,
+  North Carolina Central University, Durham, NC, USA~[CONFIRM] \\
+  \small $^{2}$Department of Chemistry and Biochemistry,
+  North Carolina Central University, Durham, NC, USA~[CONFIRM] \\
+  \small $^{*}$Corresponding author: \texttt{wfletch1@eagles.nccu.edu}
+}
 
 \date{\today}
 
 \begin{document}
-
 \maketitle
 
 \begin{abstract}
-This study presents a comprehensive geospatial analysis of hair adhesive product safety incidents and associated occupational and domestic exposure risks using Advanced Remote Computing Geographic Information System (ARC-GIS) technology. Through spatial mapping and statistical analysis of exposure patterns across demographic and geographic regions, we identified significant clustering of safety incidents in urban industrial zones and residential areas with high consumer product usage. Our methodology integrates multi-source data including incident reports, product usage statistics, and environmental factors to generate risk assessment maps. Results indicate statistically significant correlations between demographic density, occupational categories, and hair adhesive-related incidents. The implementation of ARC-GIS visualization techniques enabled identification of high-risk zones requiring targeted safety interventions. This research provides evidence-based geospatial data to inform regulatory policy, occupational health standards, and consumer safety guidelines. The derived risk maps serve as a critical tool for public health officials, occupational safety specialists, and product manufacturers in risk mitigation strategies.
+\noindent Hair adhesives (lace, wig, and eyelash bonding products) are marketed
+disproportionately to Black consumers and are applied in prolonged contact with
+the scalp, hairline, and eyelid, yet the geography of where these products are
+\emph{obtained} has not been characterized. Because the retail point of purchase
+is an upstream, observable proxy for the opportunity to acquire and use a product,
+we mapped beauty-supply retail access across North Carolina and linked it to
+census-tract race and income. Store locations were extracted from OpenStreetMap,
+tract demographics from the U.S. Census American Community Survey (ACS) 2022
+five-year estimates, and access was computed as distance to the nearest store,
+store count within a 5~km buffer, and a stores-per-capita access score, using an
+open-source GeoPandas pipeline with a parallel ArcGIS~Pro (\texttt{arcpy})
+workflow. Across 2{,}649 North Carolina tracts (population 10.5~million) served by
+349 identified stores (188 within the state), 67.5\% of tracts had no
+beauty-supply store within 5~km (median distance to nearest store 9.3~km,
+IQR 3.9--20.4). Access was strongly
+spatially clustered (Moran's $I = 0.92$ for nearest-store distance and $0.83$ for
+5~km store count, both $p = 0.001$). Contrary to a simple under-service
+hypothesis, access improved monotonically with tract percent-Black: tracts in the
+highest percent-Black quartile had a median nearest-store distance of 5.6~km
+versus 14.2~km in the lowest quartile, and 53.9\% versus 81.8\% lacked any store
+within 5~km. A negative-binomial model confirmed more stores in higher
+percent-Black tracts (incidence rate ratio 1.02 per percentage point,
+$p < 0.001$). We interpret this as spatial concentration of a targeted-market
+retail sector in Black and urban neighborhoods---greater \emph{opportunity} for
+purchase and use---rather than equitable service, with large rural access gaps.
+These are ecological access measures and are not equivalent to purchase, use,
+dermal dose, or health outcome. The maps identify where hair-adhesive exposure
+research and risk communication would reach the most product-proximate
+populations.
 
-\textbf{Keywords:} geospatial analysis, ARC-GIS, safety mapping, occupational exposure, hair adhesives, risk assessment, spatial epidemiology
-
+\vspace{6pt}
+\noindent\textbf{Keywords:} geospatial analysis; retail access; environmental
+justice; hair adhesives; beauty supply; spatial autocorrelation; GeoPandas;
+ArcGIS; North Carolina
 \end{abstract}
 
 \section{Introduction}
 \label{sec:intro}
 
-Hair adhesive products are widely utilized across the globe in both professional cosmetology settings and domestic applications. Despite their ubiquitous use, comprehensive understanding of their safety profile remains limited, particularly regarding geographic distribution of exposure incidents and associated health risks \citep{reference1, reference2}. The occupational exposure of hair stylists and wig makers to volatile organic compounds (VOCs) and skin irritants present in hair adhesives has been documented in occupational health literature; however, systematic geographic analysis of these exposures remains underdeveloped \citep{reference3}.
+Hair adhesives---lace and wig bonding glues, bonding sprays, and eyelash
+adhesives---are liquid formulations engineered for sustained wear in direct
+contact with the scalp, hairline, eyelid, and adjacent facial skin. They are
+marketed heavily to, and used disproportionately by, Black women and
+girls, a population already shown to carry distinctive body burdens of
+endocrine-active and asthma-associated chemicals from hair-care products
+\citep{helm2018,jamestodd2021,zota2017}. Direct chemical measurement of
+consumer products, including non-targeted analysis of personal-care items,
+repeatedly recovers constituents that labels do not declare
+\citep{dodson2012,boatman2026}, so the exposure potential of these products is
+not fully described by their ingredient lists.
 
-Traditional epidemiological approaches to product safety assessment have limitations in capturing spatial heterogeneity of exposure patterns. Geospatial information systems (GIS) offer robust methodologies for visualizing, analyzing, and interpreting complex spatial relationships between exposure incidents, population demographics, occupational distribution, and environmental factors. Advanced Remote Computing GIS (ARC-GIS) provides enhanced computational capacity for processing large-scale spatial datasets and generating multi-layered risk assessments.
+Hazard and exposure, however, both begin with \emph{access}: a product must be
+obtainable before it can be purchased, applied, and absorbed. Where a product
+class is sold is therefore an upstream, observable determinant of exposure
+opportunity, and one that is unevenly distributed across neighborhoods. Retail
+access has been studied extensively for food \citep{walker2010} but rarely for
+targeted personal-care retail such as beauty-supply stores, the dominant point
+of purchase for hair adhesives. Geographic information systems (GIS) are the
+standard tool for quantifying such access and for testing whether it clusters
+by neighborhood race and income \citep{anselin1995,moran1950}.
 
-The present study addresses this gap by employing ARC-GIS technology to create comprehensive spatial risk maps of hair adhesive product safety. Our objectives are threefold: (1) to document geographic patterns of hair adhesive-related incidents; (2) to identify spatial clusters of occupational and domestic exposures; and (3) to generate risk stratification maps for targeted public health interventions.
+This study maps beauty-supply retail access across North Carolina at the census
+tract level and asks three questions: (1) How far are North Carolina residents
+from a beauty-supply store, and how many such stores are near them? (2) Is that
+access spatially clustered? (3) Does access vary systematically with tract
+percent-Black and poverty? We treat retail access strictly as an
+exposure-\emph{opportunity} proxy, not as exposure itself, and we build the
+analysis in a fully reproducible open-source pipeline with a parallel ArcGIS~Pro
+workflow.
 
-\section{Literature Review}
-\label{sec:lit}
-
-\subsection{Hair Adhesive Compositions and Chemical Constituents}
-
-Hair adhesives commonly contain cyanoacrylate compounds, polyurethane-based polymers, or acrylic polymers as primary bonding agents \citep{reference4}. Secondary constituents include:
-
-\begin{itemize}
-    \item Volatile organic compounds (VOCs): n-hexane, acetone, methyl ethyl ketone
-    \item Plasticizers: dibutyl phthalate (DBP), diethyl phthalate (DEP)
-    \item Surfactants and emulsifiers
-    \item Preservatives and antimicrobial agents
-    \item Colorants and fragrance compounds
-\end{itemize}
-
-Occupational exposure to these constituents has been associated with dermatitis, respiratory irritation, and acute sensitization reactions \citep{reference5, reference6}.
-
-\subsection{Occupational Exposure Patterns}
-
-Workers in cosmetology and wig-making professions represent high-exposure populations. Epidemiological surveys indicate that approximately 25-40\% of professional hair stylists experience work-related dermatitis attributed to chemical exposure \citep{reference7}. However, geospatial documentation of occupational exposure clusters remains limited.
-
-\subsection{Domestic and Consumer Exposure}
-
-With increasing consumer adoption of hair extension technologies and DIY hair adhesive applications, domestic exposure incidents have risen proportionally \citep{reference8}. Emergency department reports indicate a 15-20\% annual increase in acute hair adhesive-related incidents among non-occupational users over the past decade \citep{reference9}.
-
-\section{Methodology}
+\section{Methods}
 \label{sec:methods}
 
-\subsection{Data Sources and Collection}
+\subsection{Study area and unit of analysis}
 
-This study synthesized data from multiple sources:
+The primary analysis covers all census tracts in North Carolina; two
+metropolitan case studies (Durham and Greensboro) are reported at finer grain.
+The unit of analysis is the census tract. All analyses are ecological:
+tract-level associations do not describe individuals, and access is not equated
+with purchase, use, internal dose, or disease.
 
-\begin{enumerate}
-    \item \textbf{Incident Reporting Systems:} National poison control centers, occupational safety databases, and emergency department surveillance systems.
-    \item \textbf{Occupational Distribution Data:} U.S. Bureau of Labor Statistics occupational employment data, mapped to geographic regions.
-    \item \textbf{Product Usage Data:} Consumer survey data from cosmetic product retailers and online platforms (2015-2024).
-    \item \textbf{Environmental and Demographic Variables:} Census data, climatological records, and ventilation infrastructure assessments.
-\end{enumerate}
+\subsection{Data sources}
 
-\subsection{Spatial Analysis Methods}
+\emph{Store locations.} Beauty-supply retail locations were extracted from
+OpenStreetMap via the Overpass API, filtered to shop categories
+(\texttt{cosmetics}, \texttt{perfumery}, \texttt{hairdresser\_supply}) and to
+names matching a beauty-supply pattern (e.g., ``Beauty Supply,'' ``Sally,''
+``Ulta,'' ``Wig''), and narrowed to retail by excluding salon, spa, nail, and
+waxing service businesses. This yields a reproducible but incomplete census of
+stores (see Limitations).
 
-\subsubsection{Data Georeferencing}
+\emph{Demographics.} Tract demographics are U.S. Census ACS 2022 five-year
+estimates: total population and Black population (table B02001), median
+household income (B19013), and population for whom poverty status is determined
+and those below poverty (B17001). Tract geometries are 2022 TIGER/Line.
 
-All incident records were georeferenced to the county or metropolitan statistical area (MSA) level using standardized geocoding procedures within ARC-GIS. Records with insufficient location data were excluded from spatial analysis.
+\subsection{Access metrics}
 
-\subsubsection{Kernel Density Estimation}
-
-Spatial clustering of incidents was assessed using kernel density estimation (KDE) with a fixed bandwidth of 50 kilometers:
-
+For each tract centroid we computed the Euclidean distance to the nearest store
+(BallTree nearest-neighbor query), the number of stores within a 5~km buffer,
+the percent of tract area within any store's 5~km service area, and a
+stores-per-capita access score,
 \begin{equation}
-\hat{f}(x,y) = \frac{1}{n h^2} \sum_{i=1}^{n} K\left(\frac{d_i}{h}\right)
+\text{access score} = \frac{\text{stores within 5 km}}{\text{tract population}}\times 1000 .
 \end{equation}
-
-where $\hat{f}(x,y)$ represents the estimated density at location $(x,y)$, $n$ is the number of incidents, $h$ is the bandwidth, $d_i$ is the distance from location $i$ to the estimation point, and $K$ is the kernel function.
-
-\subsubsection{Spatial Autocorrelation Analysis}
-
-Moran's I statistic was calculated to assess global spatial autocorrelation:
-
+A composite underserved index used for intervention targeting was defined by the
+pipeline as
 \begin{equation}
-I = \frac{n \sum_i \sum_j w_{ij}(x_i - \bar{x})(x_j - \bar{x})}{\left(\sum_i (x_i - \bar{x})^2\right)\left(\sum_i \sum_j w_{ij}\right)}
+\text{underserved index} = 0.40\,\widetilde{B} + 0.25\,\widetilde{P}
+ + 0.20\,\widetilde{A} + 0.15\,L,
 \end{equation}
+where $\widetilde{B}$, $\widetilde{P}$ are min--max-scaled percent-Black and
+poverty rate, $\widetilde{A}$ is a scaled low-access term combining inverse
+access score and distance, and $L$ flags median income below \$40{,}000. Because
+this index embeds percent-Black with a 0.40 weight by construction, we do
+\emph{not} use it as evidence of racial disparity; the disparity tests below use
+the raw access measures only, and the index is reported solely as a planning
+aid.
 
-where $w_{ij}$ represents the spatial weight matrix element, $x_i$ and $x_j$ are variable values at locations $i$ and $j$, and $\bar{x}$ is the mean value.
+\subsection{Spatial and statistical analysis}
 
-\subsubsection{Risk Stratification Index}
+Global spatial autocorrelation of access was quantified with Moran's~$I$ under
+queen contiguity and row standardization, with inference by 999 random
+permutations \citep{moran1950,anselin1995}. Associations between access and
+tract composition were summarized by Spearman rank correlation and by
+quartiles of percent-Black. A negative-binomial generalized linear model
+regressed the 5~km store count on percent-Black, poverty rate, and median
+income (per \$10{,}000). Underserved hotspots were delineated with DBSCAN on
+the high-need tracts.
 
-A composite risk index was developed incorporating four variables:
+\subsection{Software and reproducibility}
 
-\begin{equation}
-RSI = 0.35 \cdot I_{density} + 0.30 \cdot I_{occupational} + 0.20 \cdot I_{incidents} + 0.15 \cdot I_{environmental}
-\end{equation}
-
-where:
-\begin{itemize}
-    \item $I_{density}$ = normalized population density index
-    \item $I_{occupational}$ = normalized occupational exposure index
-    \item $I_{incidents}$ = normalized incident frequency index
-    \item $I_{environmental}$ = normalized environmental risk factors index
-\end{itemize}
-
-\subsection{ARC-GIS Implementation}
-
-Spatial analysis was conducted using ARC-GIS Pro (version 3.0+) with the following modules:
-\begin{itemize}
-    \item Spatial Analyst for raster-based density mapping
-    \item Network Analyst for accessibility assessments
-    \item Statistical Analysis for spatial correlation testing
-    \item 3D Analyst for visualization of multi-layered risk data
-\end{itemize}
-
-All georeferenced data were projected to Universal Transverse Mercator (UTM) coordinates for analysis and subsequently reprojected to Web Mercator for web-based visualization.
+The open-source pipeline uses GeoPandas, scikit-learn (BallTree, DBSCAN),
+libpysal/esda (Moran's~$I$), and statsmodels; a parallel ArcGIS~Pro
+\texttt{arcpy} workflow
+in \texttt{scripts/} reproduces the proximity analysis in an Esri environment. (For clarity,
+``ArcGIS'' denotes the Esri ArcGIS platform; it is not an acronym.) All code,
+input tables, and tract-level outputs are in the project repository, enabling
+re-computation of every value reported here.
 
 \section{Results}
 \label{sec:results}
 
-\subsection{Spatial Distribution of Incidents}
+\subsection{Statewide access}
 
-Analysis of 8,347 incident records from 2015-2024 revealed significant geographic clustering (Moran's I = 0.643, $p < 0.001$). High-density incident clusters were identified in:
+Across 2{,}649 North Carolina tracts (total population 10.5~million) served by
+349 identified beauty-supply stores, access was low and uneven: \textbf{67.5\%
+of tracts had no store within 5~km}, and the median distance to the nearest
+store was \textbf{9.3~km} (IQR 3.9--20.4~km). The statewide median tract was
+14.7\% Black. Figure~\ref{fig:choropleth} maps the distance surface with store
+locations: access concentrates in the Charlotte, Piedmont Triad, Triangle, and
+Fayetteville urban cores, with large far-from-store expanses across rural
+eastern and western counties.
 
-\begin{itemize}
-    \item Metropolitan statistical areas with >2 million inhabitants
-    \item Urban centers with concentrated cosmetology businesses
-    \item Regions with warm climates (higher adhesive usage rates)
-    \item Manufacturing zones with occupational exposure populations
-\end{itemize}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/fig1_nc_choropleth.png}
+\caption{Distance from each census tract to the nearest beauty-supply store
+across North Carolina (ACS 2022 tracts; stores from OpenStreetMap). Darker tracts
+are farther from any store; maroon points are the 188 extracted stores located
+within the state. Access clusters in urban cores while rural counties form
+contiguous access deserts.}
+\label{fig:choropleth}
+\end{figure}
 
-\subsection{Occupational Exposure Mapping}
+\subsection{Spatial clustering}
 
-Geospatial distribution of cosmetology and hair-related occupational workers showed significant correlation with incident clustering ($r = 0.721$, $p < 0.001$). Twenty-three distinct occupational exposure zones were delineated, with highest concentrations in coastal urban areas and metropolitan centers (Figure \ref{fig:occupational}).
+Access was strongly and significantly clustered in space. Moran's~$I$ was
+\textbf{0.92} for nearest-store distance and \textbf{0.83} for 5~km store count
+(both $p = 0.001$, 999 permutations), versus $0.66$ for percent-Black---that is,
+retail access is even more spatially concentrated than the demographic pattern
+itself.
 
-\subsection{Risk Stratification Results}
+\subsection{Access by neighborhood racial composition}
 
-Application of the Risk Stratification Index identified four geographic risk tiers:
+Contrary to a simple under-service hypothesis, access \emph{improved} as tract
+percent-Black increased (Table~\ref{tab:quartile}). Tracts in the highest
+percent-Black quartile were less than half as far from a store as those in the
+lowest quartile and were far more likely to have a store within 5~km.
 
 \begin{table}[H]
 \centering
-\caption{Geographic Risk Stratification Summary}
-\label{tab:risk}
-\begin{tabular}{|l|c|c|c|}
-\hline
-\textbf{Risk Tier} & \textbf{RSI Range} & \textbf{Number of Regions} & \textbf{Population Affected} \\
-\hline
-Very High & 0.75-1.00 & 47 & 28,450,000 \\
-\hline
-High & 0.50-0.74 & 156 & 85,320,000 \\
-\hline
-Moderate & 0.25-0.49 & 312 & 120,150,000 \\
-\hline
-Low & 0.00-0.24 & 201 & 45,080,000 \\
-\hline
-\end{tabular}
+\caption{Beauty-supply access by quartile of tract percent-Black, North Carolina
+(2{,}649 tracts). Higher percent-Black tracts have closer and more numerous
+stores.}
+\label{tab:quartile}
+\small
+\setlength{\tabcolsep}{5pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Percent-Black quartile} & \textbf{Tracts} & \textbf{Median nearest store (km)} & \textbf{Mean stores within 5 km} & \textbf{\% tracts with no store in 5 km} \\
+\midrule
+Q1 (lowest \% Black)  & 663 & 14.2 & 0.68 & 81.8 \\
+Q2                    & 662 & 9.2  & 0.97 & 70.1 \\
+Q3                    & 662 & 8.7  & 0.98 & 64.1 \\
+Q4 (highest \% Black) & 662 & 5.6  & 1.23 & 53.9 \\
+\bottomrule
+\end{tabular}}
 \end{table}
 
-\subsection{Temporal-Spatial Trends}
+\begin{figure}[H]
+\centering
+\includegraphics[width=\linewidth]{figures/fig2_quartile_gradient.png}
+\caption{Beauty-supply access by quartile of tract percent-Black. Both
+distance to the nearest store (left) and the share of tracts with no store
+within 5~km (right) decrease monotonically as percent-Black rises; the
+highest-percent-Black quartile (maroon) has the best access.}
+\label{fig:quartile}
+\end{figure}
 
-Incident frequency analysis over the 10-year study period revealed a significant increasing trend in domestic exposure incidents ($\beta = 1.23, SE = 0.18, p < 0.001$) while occupational incidents remained relatively stable. Geographic expansion of incident clustering into previously low-risk suburban areas was documented, particularly in regions with growth in DIY cosmetic application practices.
+Spearman correlations were consistent: percent-Black was negatively associated
+with distance to the nearest store ($\rho = -0.21$) and positively with store
+count ($\rho = 0.22$). In the negative-binomial model, the expected 5~km store
+count rose with percent-Black (incidence rate ratio [IRR] 1.02 per percentage
+point, $p < 0.001$), poverty rate (IRR 1.02, $p < 0.001$), and median income
+(IRR 1.21 per \$10{,}000, $p < 0.001$), the last reflecting the concentration of
+retail in denser, higher-income urban cores alongside higher-poverty urban
+tracts---an urban--rural gradient rather than a single income effect.
+
+\subsection{Metropolitan case studies}
+
+Five metropolitan areas were examined as county subsets of the statewide layer,
+so that the same store set and ACS vintage apply throughout
+(Table~\ref{tab:cities}, Figure~\ref{fig:metros}). Every metro had far better
+access than rural North Carolina---the share of tracts with no store within 5~km
+ranged from 22\% in Charlotte to 54\% in Fayetteville, against 67.5\% statewide.
+Access remained significantly spatially clustered within every metro (Moran's~$I$
+for nearest-store distance 0.61--0.79, all $p = 0.001$). Within-metro racial
+gradients were mostly modest and mixed: Greensboro's majority-Black tracts were
+closer to stores (median 2.4 vs 3.4~km) while Durham's and Fayetteville's were
+slightly farther, indicating that the strong statewide gradient in
+Table~\ref{tab:quartile} is driven mainly by the urban--rural contrast between
+metros rather than by fine-grained sorting within them.
+
+\begin{table}[H]
+\centering
+\caption{Metropolitan case studies (county subsets of the statewide layer, same
+349-store extract and ACS 2022 vintage). ``\% no store'' is the share of tracts
+with no store within 5~km. Statewide shown for reference.}
+\label{tab:cities}
+\small
+\setlength{\tabcolsep}{4pt}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Area} & \textbf{Tracts} & \textbf{Median \% Black} & \textbf{Median nearest (km)} & \textbf{\% no store in 5 km} & \textbf{Mean stores $\leq$5 km} & \textbf{Moran's $I$} \\
+\midrule
+North Carolina & 2{,}649 & 14.7 & 9.3 & 67.5 & --- & 0.92 \\
+Charlotte      & 302     & 29.8 & 3.2 & 22.2 & 3.11 & 0.79 \\
+Raleigh        & 229     & 14.3 & 3.7 & 31.9 & 1.75 & 0.78 \\
+Greensboro     & 125     & 29.4 & 3.0 & 29.6 & 4.18 & 0.70 \\
+Durham         & 67      & 31.2 & 3.6 & 29.9 & 1.22 & 0.61 \\
+Fayetteville   & 81      & 35.9 & 5.2 & 54.3 & 1.33 & 0.77 \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\linewidth]{figures/fig3_metros.png}
+\caption{Share of tracts with no beauty-supply store within 5~km across five
+North Carolina metros (county subsets of the statewide layer). Every metro has
+markedly better access than rural North Carolina (67.5\% statewide).}
+\label{fig:metros}
+\end{figure}
 
 \section{Discussion}
 \label{sec:discussion}
 
-This study represents the first comprehensive geospatial analysis of hair adhesive product safety using advanced GIS technology. Key findings underscore the heterogeneous geographic distribution of exposure incidents and the significance of spatial clustering in identifying high-risk populations.
+The clearest finding is that beauty-supply retail in North Carolina is highly
+spatially concentrated and is \emph{more} available in Black and urban
+neighborhoods, while two-thirds of the state's tracts---disproportionately
+rural---lack a store within 5~km. This is consistent with beauty-supply stores
+functioning as a targeted-market retail sector that locates where demand for
+products such as hair adhesives is greatest. Framed as exposure opportunity,
+the geography means the point-of-purchase for these prolonged-contact products
+is most dense precisely in the communities already identified in the
+biomonitoring literature as carrying elevated hair-product chemical burdens
+\citep{helm2018,jamestodd2021,zota2017}. Greater availability is not the same as
+greater risk, but it is where the opportunity for acquisition and repeated use
+is concentrated, and therefore where exposure research and risk communication
+would reach the most product-proximate populations.
 
-The identification of 47 ``very high-risk'' regions affecting 28.5 million individuals provides crucial evidence for targeted policy interventions. These regions warrant enhanced regulatory oversight, improved occupational safety protocols, and targeted consumer education campaigns. The correlation between occupational density and incident clustering ($r = 0.721$) validates the occupational exposure pathway as a significant contributor to geographic variation in incident frequency.
-
-The temporal analysis revealing increased domestic exposure incidents suggests evolving exposure pathways with changing consumer behavior. As hair adhesive-based cosmetic modifications become increasingly popular among non-occupational populations, public health surveillance systems must adapt to capture emerging exposure patterns.
-
-The integration of multi-source data through ARC-GIS enabled identification of complex, nonlinear relationships between exposure determinants that traditional epidemiological approaches might overlook. The 3D visualization capabilities of ARC-GIS Pro facilitated communication of complex spatial relationships to diverse stakeholders including policy makers, occupational health specialists, and public health officials.
+This reframing matters because the naive environmental-justice expectation---that
+Black neighborhoods are \emph{under}-served---does not hold for this retail class
+and would have been contradicted by the data. Reporting the observed direction
+honestly is itself the contribution: access disparities here are an urban--rural
+phenomenon layered on a targeted-market concentration, not a simple
+race-based deficit.
 
 \subsection{Limitations}
 
-Several limitations warrant discussion:
-
 \begin{enumerate}
-    \item \textbf{Data Completeness:} Incident reporting may be incomplete, particularly for mild exposures not requiring medical intervention. Underreporting is likely greater in regions with limited medical infrastructure.
-    \item \textbf{Temporal Resolution:} Aggregate data provided limited temporal granularity for identifying seasonal exposure patterns.
-    \item \textbf{Occupational Coding:} Occupational classification systems vary across data sources, potentially introducing measurement error.
-    \item \textbf{Environmental Variables:} Assessment of chemical composition variations across product brands and regional manufacturing sources was limited.
+\item \textbf{Store data are incomplete and noisy.} Locations come from
+OpenStreetMap, a volunteer dataset that undercounts stores---especially in rural
+areas and for independent retailers---and store counts varied across extraction
+runs. The statewide extract also contained substantial locational noise: 161 of
+the 349 returned points fell outside North Carolina, leaving 188 within the
+state (these were clipped for mapping, though distances in the pipeline were
+computed against the full set, which also legitimately captures cross-border
+stores for edge tracts). The absolute access figures are therefore approximate;
+a validated business registry (state licensing or a commercial listing such as
+Data Axle) is the clearest path to defensible counts and is the top revision
+priority.
+\item \textbf{Ecological design.} Tract-level access does not describe
+individuals and is not purchase, use, dermal dose, or disease. No causal or
+individual inference is warranted.
+\item \textbf{Access is a crude proxy.} Distance from a tract centroid to the
+nearest store, computed on planar coordinates in a single projected frame,
+ignores road networks, travel mode, online purchasing, and within-tract
+heterogeneity, and introduces mild geometric distortion over the full state
+extent.
+\item \textbf{Composite index is race-weighted by construction.} The underserved
+index embeds percent-Black at a 0.40 weight and is used only for intervention
+targeting, never as evidence of disparity; all disparity results rest on raw
+access measures.
+\item \textbf{Cross-sectional.} A single ACS vintage and a single store snapshot
+cannot speak to change over time.
+\item \textbf{No product verification.} Store categories were not field-verified
+to stock hair adhesives specifically.
 \end{enumerate}
 
-\subsection{Implications for Policy and Practice}
+\subsection{Implications and future work}
 
-Results support implementation of the following evidence-based interventions:
-
-\begin{enumerate}
-    \item Enhanced regulatory monitoring in 47 identified very-high-risk regions
-    \item Occupational safety protocol standardization in high-density cosmetology clusters
-    \item Public health campaigns targeting domestic users in regions showing temporal expansion of incidents
-    \item Integration of GIS-derived risk maps into occupational safety training curricula
-    \item Development of real-time GIS surveillance systems for emerging exposure hotspots
-\end{enumerate}
+The maps provide a site-selection tool: the highest-access, higher-percent-Black
+urban clusters are where recruitment for product sampling, biomonitoring, or
+salon-worker studies would be most efficient, and where plain-language risk
+communication would reach the most users. Priority extensions are (1) replacing
+OpenStreetMap counts with a validated store registry; (2) network- rather than
+straight-line distance; and (3) linking this access layer to the product-level
+chemical and dermal-exposure analysis developed elsewhere in this project, so
+that \emph{where} products are obtained can be joined to \emph{what} is in them.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-Geospatial analysis using ARC-GIS technology provides a powerful methodological framework for understanding complex geographic patterns of product safety incidents. This study demonstrates that hair adhesive-related exposures exhibit significant spatial clustering amenable to GIS-based analysis and visualization. The identification of high-risk geographic zones, their characterization in terms of occupational and demographic factors, and the temporal expansion into new regions provides actionable intelligence for public health policy, occupational safety regulation, and consumer protection strategies.
+Beauty-supply retail access in North Carolina is strongly spatially clustered and
+concentrated in Black and urban neighborhoods, with large rural access gaps.
+Interpreted as an exposure-opportunity proxy for hair-adhesive products, the
+geography locates the communities most product-proximate to a class of
+prolonged-contact cosmetics---an evidence-based foundation for targeting exposure
+research and risk communication, reported with its true, non-intuitive direction
+rather than an assumed one.
 
-Future research should extend this framework to incorporate real-time surveillance data, enable predictive modeling of emerging exposure hotspots, and facilitate integration with health outcome databases for assessment of longer-term health impacts associated with hair adhesive exposure. The methodology presented here is generalizable to other consumer product safety assessments and represents a paradigm shift in evidence-based public health geomatics.
+\section*{Data and code availability}
+All code, input tables, and tract-level outputs are available in the project
+repository. Every statistic in this paper is recomputable from those files.
 
 \section*{Acknowledgments}
-
-We acknowledge the National Poison Control Centers, U.S. Bureau of Labor Statistics, and participating state health departments for providing data essential to this analysis. Computing resources were provided by [Institution Name] High Performance Computing Cluster. We thank [Colleague Names] for constructive feedback on earlier versions of this manuscript.
-
-\newpage
+We thank [CONFIRM colleagues] for feedback. Store data \copyright{}
+OpenStreetMap contributors (ODbL); demographic data from the U.S. Census Bureau
+American Community Survey.
 
 \bibliographystyle{plainnat}
 \begin{thebibliography}{99}
 
-\bibitem{reference1} Author, A. (2020). Hair adhesive composition and occupational exposure. \textit{Journal of Occupational Health}, 45(3), 234--245.
+\bibitem[Anselin(1995)]{anselin1995} Anselin, L. (1995). Local indicators of
+spatial association---LISA. \textit{Geographical Analysis}, 27(2), 93--115.
 
-\bibitem{reference2} Author, B., \& Author, C. (2019). Geographic information systems in occupational epidemiology. \textit{American Journal of Industrial Medicine}, 62(8), 652--665.
+\bibitem[Boatman et~al.(2026)]{boatman2026} Boatman, A.~K., Ferland, T.~M., \&
+Whitehead, H.~D. (2026). \textit{Curated chemicals reported in consumer products
+using non-targeted analyses (NTA)} [Data set]. UL Research Institutes, Chemical
+Insights.
 
-\bibitem{reference3} Author, D. (2021). Volatile organic compound exposure in cosmetology: A systematic review. \textit{International Journal of Occupational Medicine}, 34(2), 123--145.
+\bibitem[Dodson et~al.(2012)]{dodson2012} Dodson, R.~E., et~al. (2012). Endocrine
+disruptors and asthma-associated chemicals in consumer products.
+\textit{Environmental Health Perspectives}, 120(7), 935--943.
 
-\bibitem{reference4} Author, E., Author, F., \& Author, G. (2018). Chemical composition of commercial hair adhesives. \textit{Contact Dermatitis}, 78(4), 234--244.
+\bibitem[Helm et~al.(2018)]{helm2018} Helm, J.~S., et~al. (2018). Measurement of
+endocrine disrupting and asthma-associated chemicals in hair products used by
+Black women. \textit{Environmental Research}, 165, 448--458.
 
-\bibitem{reference5} Author, H. (2017). Dermatological effects of cyanoacrylate exposure. \textit{Dermatology Reviews}, 25(6), 456--470.
+\bibitem[James-Todd et~al.(2021)]{jamestodd2021} James-Todd, T., et~al. (2021).
+Racial/ethnic disparities in environmental endocrine disrupting chemicals and
+women's reproductive health. \textit{Current Epidemiology Reports}.
 
-\bibitem{reference6} Author, I., \& Author, J. (2022). Respiratory sensitization to hair adhesive components. \textit{Respiratory Medicine Reviews}, 38(1), 78--92.
+\bibitem[Moran(1950)]{moran1950} Moran, P.~A.~P. (1950). Notes on continuous
+stochastic phenomena. \textit{Biometrika}, 37(1/2), 17--23.
 
-\bibitem{reference7} Author, K. (2020). Occupational dermatitis in cosmetology: Epidemiological trends. \textit{Occupational Medicine}, 70(5), 334--348.
+\bibitem[Walker et~al.(2010)]{walker2010} Walker, R.~E., Keane, C.~R., \&
+Burke, J.~G. (2010). Disparities and access to healthy food in the United States:
+A review of food deserts literature. \textit{Health \& Place}, 16(5), 876--884.
 
-\bibitem{reference8} Author, L., \& Author, M. (2021). Consumer product safety: Emerging exposures to hair adhesives. \textit{Public Health Reports}, 136(4), 512--525.
-
-\bibitem{reference9} Author, N. (2023). Emergency department surveillance of product-related injuries: 2013--2023 trends. \textit{Annals of Emergency Medicine}, 81(3), 289--302.
+\bibitem[Zota \& Shamasunder(2017)]{zota2017} Zota, A.~R., \& Shamasunder, B.
+(2017). The environmental injustice of beauty: Framing chemical exposures from
+beauty products as a health disparities concern. \textit{American Journal of
+Obstetrics and Gynecology}, 217(4), 418.e1--418.e6.
 
 \end{thebibliography}
 
