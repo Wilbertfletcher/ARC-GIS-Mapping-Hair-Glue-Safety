@@ -2,7 +2,7 @@
 
 ## Why it was rebuilt
 
-The previous `manuscript.tex` described a **different, fabricated study**: 8,347
+The previous `fletcher_mulrooney_2026.tex` described a **different, fabricated study**: 8,347
 poison-control/ED "incident records," Moran's I = 0.643, r = 0.721, 47
 very-high-risk regions affecting 28.5M people, a Risk Stratification Index, and
 nine placeholder citations ("Author, A. (2020)"). **None of those data or numbers
@@ -75,6 +75,6 @@ underservice narrative — the data don't support it.
 Geography*; *Journal of Exposure Science & Environmental Epidemiology*.
 
 ## Files
-- `manuscript/manuscript.tex` — rebuilt draft (8 pp, compiles with pdfLaTeX)
+- `manuscript/fletcher_mulrooney_2026.tex` — rebuilt draft (8 pp, compiles with pdfLaTeX)
 - `manuscript/analysis/compute_nc_statistics.py` — reproducible statistics
 - `manuscript/MANUSCRIPT_REBUILD_NOTES.md` — this file
