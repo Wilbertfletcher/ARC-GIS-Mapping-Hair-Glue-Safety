@@ -126,3 +126,17 @@ This project includes `runtime.txt` for a Streamlit-Cloud-friendly Python versio
 - The requested packages were installed successfully in the project environment: `geopandas`, `pandas`, `shapely`, `geopy`, `scikit-learn`, `matplotlib`, `contextily`, `census`, `us`, `folium`, `numpy`, `requests`, and `streamlit`.
 - The separate `arcgis` pip package did **not** install in this Python 3.14 environment; use **ArcGIS Pro / `arcpy`** for the ArcGIS-specific workflow.
 
+## Reproducing the paper
+
+The folder `paper_reproduction/` regenerates every number, table and figure in
+`manuscript/fletcher_mulrooney_2026.tex` from the data in `outputs/`, and checks the
+manuscript text against the results:
+
+```bash
+cd paper_reproduction
+pip install -r requirements.txt
+python reproduce.py --sync-manuscript
+python verify_against_paper.py
+```
+
+See `paper_reproduction/README.md` for details.

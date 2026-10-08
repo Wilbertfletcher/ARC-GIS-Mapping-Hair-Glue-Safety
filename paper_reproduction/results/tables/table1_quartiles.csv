@@ -1,0 +1,5 @@
+quartile,tracts,pct_black_min,pct_black_max,median_nearest_km,mean_stores_5km,pct_no_store_5km
+Q1,663,0.0,4.7,14.2,0.68,81.7
+Q2,662,4.7,14.7,9.2,0.97,70.1
+Q3,662,14.7,32.2,8.7,0.98,64.0
+Q4,662,32.2,98.4,5.5,1.23,53.9

@@ -1,0 +1,6 @@
+metro,county_fips,tracts,population,median_pct_black,median_nearest_km,pct_no_store_5km,mean_stores_5km,majority_black_tracts,nearest_km_majority_black,nearest_km_other,moran_I_distance,moran_p_distance
+Charlotte,119,302,1115403,29.8,3.2,22.2,3.11,69,3.5,3.1,0.79,0.001
+Raleigh,183,229,1132103,14.3,3.7,31.9,1.75,12,3.4,3.8,0.78,0.001
+Greensboro,081,125,539557,29.4,3.0,29.6,4.18,36,2.4,3.4,0.7,0.001
+Durham,063,67,325101,31.2,3.6,29.9,1.22,13,4.3,3.5,0.61,0.001
+Fayetteville,051,81,335207,35.9,5.2,54.3,1.33,18,4.4,5.7,0.76,0.001

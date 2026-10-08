@@ -1,80 +1,65 @@
-# Manuscript rebuild — provenance & status
+# Manuscript notes
 
-## Why it was rebuilt
+Paper: `fletcher_mulrooney_2026.tex` (PDF alongside it). Everything quantitative in
+it is regenerated and checked by `../paper_reproduction/` (see its README).
 
-The previous `fletcher_mulrooney_2026.tex` described a **different, fabricated study**: 8,347
-poison-control/ED "incident records," Moran's I = 0.643, r = 0.721, 47
-very-high-risk regions affecting 28.5M people, a Risk Stratification Index, and
-nine placeholder citations ("Author, A. (2020)"). **None of those data or numbers
-exist in this repository**, and it defined "ARC-GIS" incorrectly as "Advanced
-Remote Computing GIS." That draft could not be submitted — it would be data
-fabrication. It has been replaced.
+## History
 
-## What the new manuscript reports
+The first draft in this repository described a study that was never run: 8,347
+incident records, a risk stratification index, nine placeholder references, and an
+incorrect expansion of "ArcGIS". None of that data existed here, so the draft was
+replaced with the analysis the repository actually performs: beauty-supply retail
+access across North Carolina census tracts, framed as an exposure-opportunity proxy
+for hair adhesives.
 
-The real study this repo actually performs: a **census-tract geospatial analysis
-of beauty-supply retail access in North Carolina**, framed as an
-exposure-*opportunity* proxy for hair-adhesive products. Every number is computed
-from this repo's own outputs by `manuscript/analysis/compute_nc_statistics.py`.
+## Corrections made in the latest revision
 
-## Provenance of each figure (all recomputable)
+Found while building `paper_reproduction/`, which recomputes every number:
 
-Source outputs:
-- Statewide: `outputs/streamlit_queries/nc_usa/` (2,649 tracts w/ pop > 0, 349 stores)
-- Greensboro: `outputs/streamlit_queries/greensboro_nc_usa/` (114 tracts, 24 stores)
-- Durham: `outputs/durham_beauty_supply_only/` (67 tracts, 8 beauty-supply-only stores)
+- Table 1 and the abstract had three rounding slips from rounding twice
+  (81.8 should be 81.7, 5.6 should be 5.5, 64.1 should be 64.0). Fixed.
+- Table 2 had Fayetteville's Moran's I as 0.77; the value is 0.76. Fixed. The
+  placeholder cell for the statewide mean store count is now 0.97.
+- The text said majority-Black tracts in Fayetteville were farther from stores.
+  They are closer (4.4 vs 5.7 km). The within-metro paragraph is rewritten with all
+  five metros, and its conclusion is now worded as a suggestion, not a finding.
+- "188 stores within the state" was wrong. 183 are inside the state outline and 188
+  are inside it or within 8 km. The 161 points beyond that are mostly real stores in
+  South Carolina, Georgia and Tennessee returned by a bounding-box query (156 of the
+  161 lie inside North Carolina's bounding box), not coordinate noise as the draft
+  said. The Limitations item is rewritten.
+- The methods said two case studies; there are five.
+- The regression is a negative binomial GLM with the dispersion fixed at 1. The
+  paper now says so and reports two sensitivity checks (estimated dispersion,
+  county-clustered standard errors). Neither changes any conclusion.
+- Moran's I p-values are permutation pseudo-p values, now labelled as such.
+- New sentence in Results 3.3: access by population-density quartile (98.5% of
+  lowest-density tracts have no store within 5 km, against 24.2% of the highest).
+  This gives the paper's repeated "urban to rural" statements a measured basis.
+  Delete the sentence if you prefer not to include it.
+- The affiliation lines ran off the right edge of page 1. Fixed.
+- All en and em dashes were removed. Ranges read "3.9 to 20.4"; page ranges in the
+  reference list use a hyphen. The only dash-like mark left in the PDF is the minus
+  sign in "rho = -0.21".
 
-Key verified numbers:
-| Statistic | Value | How |
-|---|---|---|
-| NC tracts / population / stores | 2,649 / 10.47M / 349 | sums from enriched GeoJSON |
-| % NC tracts with no store ≤5 km | 67.5% | `store_count_5km == 0` |
-| Median nearest-store distance (NC) | 9.3 km (IQR 3.9–20.4) | `nearest_store_km` |
-| Moran's I, nearest-store distance | 0.92 (p=0.001) | Queen contiguity, 999 perms |
-| Moran's I, 5 km store count | 0.83 (p=0.001) | same |
-| Moran's I, percent-Black | 0.66 (p=0.001) | same (for comparison) |
-| Quartile gradient (Table 1) | 14.2→5.6 km Q1→Q4 | `pd.qcut(pct_black,4)` |
-| Spearman ρ (pct_black, nearest) | −0.21 | rank corr |
-| NB model IRR pct_black / poverty / income | 1.02 / 1.02 / 1.21 | statsmodels GLM, NegBin |
+## Still open before submission
 
-Re-run: `python manuscript/analysis/compute_nc_statistics.py` (needs
-`geopandas libpysal esda statsmodels`).
-
-## The headline finding (and why it's stated the way it is)
-
-Access **improves** with tract percent-Black — higher-%Black tracts are closer to
-and have more stores. This is the **opposite** of a naive "Black neighborhoods are
-underserved" claim. The honest interpretation, written into the Discussion:
-beauty-supply retail is a targeted-market sector concentrated in Black/urban
-areas (greater exposure *opportunity*), with the real access gap being
-**rural**. Do not let a reviewer or co-author "flip" this back to an
-underservice narrative — the data don't support it.
-
-## What still needs YOU before submission
-
-1. **[CONFIRM] affiliations** — I put Fletcher & Mulrooney in NCCU Environmental,
-   Earth & Geospatial Sciences and Schultz in NCCU Chemistry. Verify exact
-   departments and whether Schultz/Mulrooney have approved co-authorship.
-2. **[CONFIRM] corresponding email** — currently your `wfletch1@eagles.nccu.edu`.
-3. **Store data** — the single biggest weakness. OpenStreetMap undercounts and
-   varied run-to-run (Durham shows 6/8/40 stores across different runs). For a
-   real submission, replace with a validated registry (NC business licensing,
-   InfoUSA/Data Axle, or manual verification) and re-run the pipeline.
-4. **ACS vintage** — confirm the pipeline actually queried 2022 (default is 2022);
-   state the exact release.
-5. **Figures** — the repo has `beauty_access_map.png` per city; add the statewide
-   choropleth + store overlay and a quartile bar chart. Not yet embedded.
-6. **Scale the case studies** if desired — Charlotte, Raleigh, Fayetteville all
-   runnable with the existing pipeline.
-7. **Citations** — the 8 references are real but need DOIs/page numbers filled and
-   a couple more (OpenStreetMap, ACS methodology, a beauty-supply retail
-   geography reference).
+1. `[CONFIRM]` markers: affiliations for Schultz and Mulrooney, co-author approval,
+   acknowledgments.
+2. Store data. OpenStreetMap undercounts, varied between runs, and the statewide
+   extract mixes in out-of-state stores. A validated registry is the biggest
+   improvement available.
+3. Framing claim to source or soften: the abstract says hair adhesives "are
+   marketed disproportionately to Black consumers", and the introduction says they
+   are "used disproportionately by" Black women and girls. The cited papers support
+   hair products in general, not adhesives specifically.
+4. References: the reference list was written from memory and needs checking
+   against the sources (titles, volumes, pages, DOIs), especially James-Todd et al.
+   The proposal's `references.bib` has verified entries for several of these.
+5. Spatial dependence: the regression p-values ignore it. A spatial lag or error
+   model, or county-level random effects, would be the stronger analysis.
 
 ## Target journals
-*Health & Place*; *International Journal of Health Geographics*; *Applied
-Geography*; *Journal of Exposure Science & Environmental Epidemiology*.
 
-## Files
-- `manuscript/fletcher_mulrooney_2026.tex` — rebuilt draft (8 pp, compiles with pdfLaTeX)
-- `manuscript/analysis/compute_nc_statistics.py` — reproducible statistics
-- `manuscript/MANUSCRIPT_REBUILD_NOTES.md` — this file
+Health & Place; International Journal of Health Geographics; Applied Geography;
+Journal of Exposure Science and Environmental Epidemiology.

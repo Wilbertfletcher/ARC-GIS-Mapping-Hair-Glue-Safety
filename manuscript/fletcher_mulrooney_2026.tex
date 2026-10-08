@@ -22,13 +22,13 @@
 \rhead{\thepage}
 \lhead{Geospatial Mapping of Beauty-Supply Retail Access, North Carolina}
 
-% ---------------------------------------------------------------------------
-% NOTE (not part of the paper): every number in this draft is computed from
-% this repository's own output GeoJSON/CSV files by scripts/ plus the
-% reproducible analysis in manuscript/analysis/. See MANUSCRIPT_REBUILD_NOTES.md
-% for provenance of each figure. Affiliations and acknowledgments are marked
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% NOTE (not part of the paper): every number, table, and figure in this draft
+% is regenerated from this repository's output GeoJSON files by the code in
+% paper_reproduction/ (see its README; verify_against_paper.py checks this text
+% against the computed results). Affiliations and acknowledgments are marked
 % [CONFIRM] where they need the authors' input.
-% ---------------------------------------------------------------------------
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \title{Mapping Beauty-Supply Retail Access as an Exposure-Opportunity Proxy
 for Hair-Adhesive Products: A Census-Tract Geospatial Analysis of
@@ -37,12 +37,12 @@ North Carolina}
 \author{
   Wilbert J. Fletcher III$^{1,*}$,
   Jonathan Schultz$^{2}$,
-  Timothy Mulrooney$^{1}$ \\[4pt]
-  \small $^{1}$Department of Environmental, Earth and Geospatial Sciences,
-  North Carolina Central University, Durham, NC, USA~[CONFIRM] \\
-  \small $^{2}$Department of Chemistry and Biochemistry,
-  North Carolina Central University, Durham, NC, USA~[CONFIRM] \\
-  \small $^{*}$Corresponding author: \texttt{wfletch1@eagles.nccu.edu}
+  Timothy Mulrooney$^{1}$ \\[6pt]
+  {\small $^{1}$Department of Environmental, Earth and Geospatial Sciences,} \\
+  {\small North Carolina Central University, Durham, NC, USA~[CONFIRM]} \\[2pt]
+  {\small $^{2}$Department of Chemistry and Biochemistry,} \\
+  {\small North Carolina Central University, Durham, NC, USA~[CONFIRM]} \\[2pt]
+  {\small $^{*}$Corresponding author: \texttt{wfletch1@eagles.nccu.edu}}
 }
 
 \date{\today}
@@ -63,19 +63,19 @@ five-year estimates, and access was computed as distance to the nearest store,
 store count within a 5~km buffer, and a stores-per-capita access score, using an
 open-source GeoPandas pipeline with a parallel ArcGIS~Pro (\texttt{arcpy})
 workflow. Across 2{,}649 North Carolina tracts (population 10.5~million) served by
-349 identified stores (188 within the state), 67.5\% of tracts had no
+349 identified stores (183 inside the state), 67.5\% of tracts had no
 beauty-supply store within 5~km (median distance to nearest store 9.3~km,
-IQR 3.9--20.4). Access was strongly
+IQR 3.9 to 20.4). Access was strongly
 spatially clustered (Moran's $I = 0.92$ for nearest-store distance and $0.83$ for
-5~km store count, both $p = 0.001$). Contrary to a simple under-service
+5~km store count, both pseudo-$p = 0.001$). Contrary to a simple under-service
 hypothesis, access improved monotonically with tract percent-Black: tracts in the
-highest percent-Black quartile had a median nearest-store distance of 5.6~km
-versus 14.2~km in the lowest quartile, and 53.9\% versus 81.8\% lacked any store
+highest percent-Black quartile had a median nearest-store distance of 5.5~km
+versus 14.2~km in the lowest quartile, and 53.9\% versus 81.7\% lacked any store
 within 5~km. A negative-binomial model confirmed more stores in higher
 percent-Black tracts (incidence rate ratio 1.02 per percentage point,
 $p < 0.001$). We interpret this as spatial concentration of a targeted-market
-retail sector in Black and urban neighborhoods---greater \emph{opportunity} for
-purchase and use---rather than equitable service, with large rural access gaps.
+retail sector in Black and urban neighborhoods (greater \emph{opportunity} for
+purchase and use) rather than equitable service, with large rural access gaps.
 These are ecological access measures and are not equivalent to purchase, use,
 dermal dose, or health outcome. The maps identify where hair-adhesive exposure
 research and risk communication would reach the most product-proximate
@@ -90,8 +90,8 @@ ArcGIS; North Carolina
 \section{Introduction}
 \label{sec:intro}
 
-Hair adhesives---lace and wig bonding glues, bonding sprays, and eyelash
-adhesives---are liquid formulations engineered for sustained wear in direct
+Hair adhesives (lace and wig bonding glues, bonding sprays, and eyelash
+adhesives) are liquid formulations engineered for sustained wear in direct
 contact with the scalp, hairline, eyelid, and adjacent facial skin. They are
 marketed heavily to, and used disproportionately by, Black women and
 girls, a population already shown to carry distinctive body burdens of
@@ -126,9 +126,11 @@ workflow.
 
 \subsection{Study area and unit of analysis}
 
-The primary analysis covers all census tracts in North Carolina; two
-metropolitan case studies (Durham and Greensboro) are reported at finer grain.
-The unit of analysis is the census tract. All analyses are ecological:
+The primary analysis covers all census tracts in North Carolina with a
+nonzero population (2{,}649 of 2{,}672; 23 zero-population tracts were excluded).
+Five metropolitan case studies (Charlotte, Raleigh, Greensboro, Durham, and
+Fayetteville) are reported at finer grain as county subsets of the statewide
+layer. The unit of analysis is the census tract. All analyses are ecological:
 tract-level associations do not describe individuals, and access is not equated
 with purchase, use, internal dose, or disease.
 
@@ -162,7 +164,7 @@ pipeline as
 \text{underserved index} = 0.40\,\widetilde{B} + 0.25\,\widetilde{P}
  + 0.20\,\widetilde{A} + 0.15\,L,
 \end{equation}
-where $\widetilde{B}$, $\widetilde{P}$ are min--max-scaled percent-Black and
+where $\widetilde{B}$, $\widetilde{P}$ are min-max scaled percent-Black and
 poverty rate, $\widetilde{A}$ is a scaled low-access term combining inverse
 access score and distance, and $L$ flags median income below \$40{,}000. Because
 this index embeds percent-Black with a 0.40 weight by construction, we do
@@ -176,20 +178,24 @@ Global spatial autocorrelation of access was quantified with Moran's~$I$ under
 queen contiguity and row standardization, with inference by 999 random
 permutations \citep{moran1950,anselin1995}. Associations between access and
 tract composition were summarized by Spearman rank correlation and by
-quartiles of percent-Black. A negative-binomial generalized linear model
-regressed the 5~km store count on percent-Black, poverty rate, and median
-income (per \$10{,}000). Underserved hotspots were delineated with DBSCAN on
-the high-need tracts.
+quartiles of percent-Black and of population density (persons per km$^2$). A
+negative-binomial generalized linear model (dispersion fixed at 1) regressed the
+5~km store count on percent-Black, poverty rate, and median income (per
+\$10{,}000); it was re-estimated with maximum-likelihood dispersion and with
+county-clustered standard errors as sensitivity checks. Because Moran's~$I$ is
+tested by permutation, the smallest attainable pseudo-$p$ with 999 permutations
+is 0.001. Underserved hotspots were delineated with DBSCAN on the high-need
+tracts.
 
 \subsection{Software and reproducibility}
 
 The open-source pipeline uses GeoPandas, scikit-learn (BallTree, DBSCAN),
 libpysal/esda (Moran's~$I$), and statsmodels; a parallel ArcGIS~Pro
-\texttt{arcpy} workflow
-in \texttt{scripts/} reproduces the proximity analysis in an Esri environment. (For clarity,
-``ArcGIS'' denotes the Esri ArcGIS platform; it is not an acronym.) All code,
-input tables, and tract-level outputs are in the project repository, enabling
-re-computation of every value reported here.
+\texttt{arcpy} workflow in \texttt{scripts/} reproduces the proximity analysis in
+an Esri environment. (For clarity, ``ArcGIS'' denotes the Esri ArcGIS platform; it
+is not an acronym.) All code, input tables, and tract-level outputs are in the
+project repository, and the folder \texttt{paper\_reproduction/} regenerates every
+number, table, and figure reported here (see Data and code availability).
 
 \section{Results}
 \label{sec:results}
@@ -197,9 +203,9 @@ re-computation of every value reported here.
 \subsection{Statewide access}
 
 Across 2{,}649 North Carolina tracts (total population 10.5~million) served by
-349 identified beauty-supply stores, access was low and uneven: \textbf{67.5\%
+349 identified beauty-supply stores (183 inside the state; see Limitations), access was low and uneven: \textbf{67.5\%
 of tracts had no store within 5~km}, and the median distance to the nearest
-store was \textbf{9.3~km} (IQR 3.9--20.4~km). The statewide median tract was
+store was \textbf{9.3~km} (IQR 3.9 to 20.4~km). The statewide median tract was
 14.7\% Black. Figure~\ref{fig:choropleth} maps the distance surface with store
 locations: access concentrates in the Charlotte, Piedmont Triad, Triangle, and
 Fayetteville urban cores, with large far-from-store expanses across rural
@@ -210,8 +216,8 @@ eastern and western counties.
 \includegraphics[width=\linewidth]{figures/fig1_nc_choropleth.png}
 \caption{Distance from each census tract to the nearest beauty-supply store
 across North Carolina (ACS 2022 tracts; stores from OpenStreetMap). Darker tracts
-are farther from any store; maroon points are the 188 extracted stores located
-within the state. Access clusters in urban cores while rural counties form
+are farther from any store; maroon points are the 188 extracted stores inside the
+state or within about 8~km of it. Access clusters in urban cores while rural counties form
 contiguous access deserts.}
 \label{fig:choropleth}
 \end{figure}
@@ -220,9 +226,9 @@ contiguous access deserts.}
 
 Access was strongly and significantly clustered in space. Moran's~$I$ was
 \textbf{0.92} for nearest-store distance and \textbf{0.83} for 5~km store count
-(both $p = 0.001$, 999 permutations), versus $0.66$ for percent-Black---that is,
-retail access is even more spatially concentrated than the demographic pattern
-itself.
+(both pseudo-$p = 0.001$, 999 permutations), versus $0.66$ for percent-Black.
+Retail access is thus even more spatially concentrated than the demographic
+pattern itself.
 
 \subsection{Access by neighborhood racial composition}
 
@@ -244,10 +250,10 @@ stores.}
 \toprule
 \textbf{Percent-Black quartile} & \textbf{Tracts} & \textbf{Median nearest store (km)} & \textbf{Mean stores within 5 km} & \textbf{\% tracts with no store in 5 km} \\
 \midrule
-Q1 (lowest \% Black)  & 663 & 14.2 & 0.68 & 81.8 \\
+Q1 (lowest \% Black)  & 663 & 14.2 & 0.68 & 81.7 \\
 Q2                    & 662 & 9.2  & 0.97 & 70.1 \\
-Q3                    & 662 & 8.7  & 0.98 & 64.1 \\
-Q4 (highest \% Black) & 662 & 5.6  & 1.23 & 53.9 \\
+Q3                    & 662 & 8.7  & 0.98 & 64.0 \\
+Q4 (highest \% Black) & 662 & 5.5  & 1.23 & 53.9 \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -264,33 +270,41 @@ highest-percent-Black quartile (maroon) has the best access.}
 
 Spearman correlations were consistent: percent-Black was negatively associated
 with distance to the nearest store ($\rho = -0.21$) and positively with store
-count ($\rho = 0.22$). In the negative-binomial model, the expected 5~km store
-count rose with percent-Black (incidence rate ratio [IRR] 1.02 per percentage
-point, $p < 0.001$), poverty rate (IRR 1.02, $p < 0.001$), and median income
-(IRR 1.21 per \$10{,}000, $p < 0.001$), the last reflecting the concentration of
-retail in denser, higher-income urban cores alongside higher-poverty urban
-tracts---an urban--rural gradient rather than a single income effect.
+count ($\rho = 0.22$). In the negative-binomial model ($n = 2{,}624$ tracts with
+complete covariates; dispersion fixed at 1), the expected 5~km store count rose
+with percent-Black (incidence rate ratio [IRR] 1.02 per percentage point,
+$p < 0.001$), poverty rate (IRR 1.02, $p < 0.001$), and median income (IRR 1.21
+per \$10{,}000, $p < 0.001$). The associations kept their direction and
+significance when dispersion was estimated by maximum likelihood (IRR 1.02 for
+percent-Black, 1.02 for poverty, 1.24 for income) and when standard errors were
+clustered by county (all $p < 0.001$). Access also tracked population density:
+98.5\% of tracts in the lowest-density quartile had no store within 5~km (median
+distance 22.6~km), compared with 24.2\% (3.1~km) in the highest-density quartile.
+The percent-Black gradient therefore sits on top of a steep urban to rural gradient.
 
 \subsection{Metropolitan case studies}
 
 Five metropolitan areas were examined as county subsets of the statewide layer,
 so that the same store set and ACS vintage apply throughout
-(Table~\ref{tab:cities}, Figure~\ref{fig:metros}). Every metro had far better
-access than rural North Carolina---the share of tracts with no store within 5~km
-ranged from 22\% in Charlotte to 54\% in Fayetteville, against 67.5\% statewide.
-Access remained significantly spatially clustered within every metro (Moran's~$I$
-for nearest-store distance 0.61--0.79, all $p = 0.001$). Within-metro racial
-gradients were mostly modest and mixed: Greensboro's majority-Black tracts were
-closer to stores (median 2.4 vs 3.4~km) while Durham's and Fayetteville's were
-slightly farther, indicating that the strong statewide gradient in
-Table~\ref{tab:quartile} is driven mainly by the urban--rural contrast between
-metros rather than by fine-grained sorting within them.
+(Table~\ref{tab:cities}, Figure~\ref{fig:metros}). Every metro had better access
+than the state as a whole: the share of tracts with no store within 5~km ranged
+from 22\% in Charlotte to 54\% in Fayetteville, against 67.5\% statewide. Access
+remained significantly spatially clustered within every metro (Moran's~$I$ for
+nearest-store distance 0.61 to 0.79, all pseudo-$p = 0.001$). Within-metro racial
+gradients were modest and mixed. Majority-Black tracts were closer to the nearest
+store than other tracts in Greensboro (median 2.4 vs 3.4~km), Raleigh (3.4 vs
+3.8~km), and Fayetteville (4.4 vs 5.7~km), and slightly farther in Charlotte (3.5
+vs 3.1~km) and Durham (4.3 vs 3.5~km). This pattern suggests that the strong
+statewide gradient in Table~\ref{tab:quartile} reflects, at least in part, the
+contrast between urban and rural counties rather than consistent sorting within
+metros.
 
 \begin{table}[H]
 \centering
 \caption{Metropolitan case studies (county subsets of the statewide layer, same
 349-store extract and ACS 2022 vintage). ``\% no store'' is the share of tracts
-with no store within 5~km. Statewide shown for reference.}
+with no store within 5~km. Moran's $I$ is for nearest-store distance
+(pseudo-$p = 0.001$ in every row). Statewide shown for reference.}
 \label{tab:cities}
 \small
 \setlength{\tabcolsep}{4pt}
@@ -299,12 +313,12 @@ with no store within 5~km. Statewide shown for reference.}
 \toprule
 \textbf{Area} & \textbf{Tracts} & \textbf{Median \% Black} & \textbf{Median nearest (km)} & \textbf{\% no store in 5 km} & \textbf{Mean stores $\leq$5 km} & \textbf{Moran's $I$} \\
 \midrule
-North Carolina & 2{,}649 & 14.7 & 9.3 & 67.5 & --- & 0.92 \\
+North Carolina & 2{,}649 & 14.7 & 9.3 & 67.5 & 0.97 & 0.92 \\
 Charlotte      & 302     & 29.8 & 3.2 & 22.2 & 3.11 & 0.79 \\
 Raleigh        & 229     & 14.3 & 3.7 & 31.9 & 1.75 & 0.78 \\
 Greensboro     & 125     & 29.4 & 3.0 & 29.6 & 4.18 & 0.70 \\
 Durham         & 67      & 31.2 & 3.6 & 29.9 & 1.22 & 0.61 \\
-Fayetteville   & 81      & 35.9 & 5.2 & 54.3 & 1.33 & 0.77 \\
+Fayetteville   & 81      & 35.9 & 5.2 & 54.3 & 1.33 & 0.76 \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -314,7 +328,7 @@ Fayetteville   & 81      & 35.9 & 5.2 & 54.3 & 1.33 & 0.77 \\
 \includegraphics[width=0.92\linewidth]{figures/fig3_metros.png}
 \caption{Share of tracts with no beauty-supply store within 5~km across five
 North Carolina metros (county subsets of the statewide layer). Every metro has
-markedly better access than rural North Carolina (67.5\% statewide).}
+better access than the state as a whole (dashed line, 67.5\%).}
 \label{fig:metros}
 \end{figure}
 
@@ -323,8 +337,8 @@ markedly better access than rural North Carolina (67.5\% statewide).}
 
 The clearest finding is that beauty-supply retail in North Carolina is highly
 spatially concentrated and is \emph{more} available in Black and urban
-neighborhoods, while two-thirds of the state's tracts---disproportionately
-rural---lack a store within 5~km. This is consistent with beauty-supply stores
+neighborhoods, while two-thirds of the state's tracts, disproportionately
+rural, lack a store within 5~km. This is consistent with beauty-supply stores
 functioning as a targeted-market retail sector that locates where demand for
 products such as hair adhesives is greatest. Framed as exposure opportunity,
 the geography means the point-of-purchase for these prolonged-contact products
@@ -335,27 +349,28 @@ greater risk, but it is where the opportunity for acquisition and repeated use
 is concentrated, and therefore where exposure research and risk communication
 would reach the most product-proximate populations.
 
-This reframing matters because the naive environmental-justice expectation---that
-Black neighborhoods are \emph{under}-served---does not hold for this retail class
-and would have been contradicted by the data. Reporting the observed direction
-honestly is itself the contribution: access disparities here are an urban--rural
-phenomenon layered on a targeted-market concentration, not a simple
-race-based deficit.
+This reframing matters because the naive environmental-justice expectation that
+Black neighborhoods are \emph{under}-served does not hold for this retail class;
+the data contradict it. Reporting the observed direction is itself part of the
+contribution: access disparities here follow an urban to rural contrast layered
+on a targeted-market concentration, not a simple race-based deficit.
 
 \subsection{Limitations}
 
 \begin{enumerate}
-\item \textbf{Store data are incomplete and noisy.} Locations come from
-OpenStreetMap, a volunteer dataset that undercounts stores---especially in rural
-areas and for independent retailers---and store counts varied across extraction
-runs. The statewide extract also contained substantial locational noise: 161 of
-the 349 returned points fell outside North Carolina, leaving 188 within the
-state (these were clipped for mapping, though distances in the pipeline were
-computed against the full set, which also legitimately captures cross-border
-stores for edge tracts). The absolute access figures are therefore approximate;
-a validated business registry (state licensing or a commercial listing such as
-Data Axle) is the clearest path to defensible counts and is the top revision
-priority.
+\item \textbf{Store data are incomplete and include out-of-state stores.}
+Locations come from OpenStreetMap, a volunteer dataset that undercounts stores,
+especially in rural areas and for independent retailers, and store counts varied
+across extraction runs. The statewide extract appears to have been retrieved with
+a bounding-box query: 161 of its 349 points lie more than about 8~km outside North
+Carolina, and 156 of those fall inside the state's bounding box (for example
+stores in Greenville and Spartanburg, South Carolina), leaving 183 stores inside
+the state. Distances were computed against all 349 points, which lets tracts near
+the state line use the nearest store across it, but the figure of 349 overstates
+the number of North Carolina stores. Only stores inside or within about 8~km of
+the state are drawn in Figure~\ref{fig:choropleth}. A validated business registry
+(state licensing or a commercial listing such as Data Axle) is the clearest path
+to defensible counts and is the top revision priority.
 \item \textbf{Ecological design.} Tract-level access does not describe
 individuals and is not purchase, use, dermal dose, or disease. No causal or
 individual inference is warranted.
@@ -392,13 +407,16 @@ Beauty-supply retail access in North Carolina is strongly spatially clustered an
 concentrated in Black and urban neighborhoods, with large rural access gaps.
 Interpreted as an exposure-opportunity proxy for hair-adhesive products, the
 geography locates the communities most product-proximate to a class of
-prolonged-contact cosmetics---an evidence-based foundation for targeting exposure
-research and risk communication, reported with its true, non-intuitive direction
-rather than an assumed one.
+prolonged-contact cosmetics. This offers an evidence-based foundation for targeting
+exposure research and risk communication, reported in the direction the data show
+rather than the one assumed.
 
 \section*{Data and code availability}
 All code, input tables, and tract-level outputs are available in the project
-repository. Every statistic in this paper is recomputable from those files.
+repository. The folder \texttt{paper\_reproduction/} regenerates every statistic,
+table, and figure in this paper from those files (\texttt{python reproduce.py}), and
+\texttt{verify\_against\_paper.py} checks the numbers printed here against the
+computed results.
 
 \section*{Acknowledgments}
 We thank [CONFIRM colleagues] for feedback. Store data \copyright{}
@@ -409,7 +427,7 @@ American Community Survey.
 \begin{thebibliography}{99}
 
 \bibitem[Anselin(1995)]{anselin1995} Anselin, L. (1995). Local indicators of
-spatial association---LISA. \textit{Geographical Analysis}, 27(2), 93--115.
+spatial association: LISA. \textit{Geographical Analysis}, 27(2), 93-115.
 
 \bibitem[Boatman et~al.(2026)]{boatman2026} Boatman, A.~K., Ferland, T.~M., \&
 Whitehead, H.~D. (2026). \textit{Curated chemicals reported in consumer products
@@ -418,27 +436,27 @@ Insights.
 
 \bibitem[Dodson et~al.(2012)]{dodson2012} Dodson, R.~E., et~al. (2012). Endocrine
 disruptors and asthma-associated chemicals in consumer products.
-\textit{Environmental Health Perspectives}, 120(7), 935--943.
+\textit{Environmental Health Perspectives}, 120(7), 935-943.
 
 \bibitem[Helm et~al.(2018)]{helm2018} Helm, J.~S., et~al. (2018). Measurement of
 endocrine disrupting and asthma-associated chemicals in hair products used by
-Black women. \textit{Environmental Research}, 165, 448--458.
+Black women. \textit{Environmental Research}, 165, 448-458.
 
 \bibitem[James-Todd et~al.(2021)]{jamestodd2021} James-Todd, T., et~al. (2021).
 Racial/ethnic disparities in environmental endocrine disrupting chemicals and
 women's reproductive health. \textit{Current Epidemiology Reports}.
 
 \bibitem[Moran(1950)]{moran1950} Moran, P.~A.~P. (1950). Notes on continuous
-stochastic phenomena. \textit{Biometrika}, 37(1/2), 17--23.
+stochastic phenomena. \textit{Biometrika}, 37(1/2), 17-23.
 
 \bibitem[Walker et~al.(2010)]{walker2010} Walker, R.~E., Keane, C.~R., \&
 Burke, J.~G. (2010). Disparities and access to healthy food in the United States:
-A review of food deserts literature. \textit{Health \& Place}, 16(5), 876--884.
+A review of food deserts literature. \textit{Health \& Place}, 16(5), 876-884.
 
 \bibitem[Zota \& Shamasunder(2017)]{zota2017} Zota, A.~R., \& Shamasunder, B.
 (2017). The environmental injustice of beauty: Framing chemical exposures from
 beauty products as a health disparities concern. \textit{American Journal of
-Obstetrics and Gynecology}, 217(4), 418.e1--418.e6.
+Obstetrics and Gynecology}, 217(4), 418.e1-418.e6.
 
 \end{thebibliography}
 
