@@ -47,10 +47,11 @@ Found while building `paper_reproduction/`, which recomputes every number:
 
 ## Still open before submission
 
-1. Authors and affiliations. The `[CONFIRM]` markers are gone from the paper, but the
-   affiliations (Fletcher and Mulrooney: Environmental, Earth and Geospatial
-   Sciences; Schultz: Chemistry and Biochemistry, all at NCCU) were assumed, not
-   supplied. Check them and each co-author's approval before submitting.
+1. Authors and affiliations. The `[CONFIRM]` markers are gone from the paper.
+   Fletcher's department (Chemistry and Biochemistry, NCCU) was supplied by the
+   author. Schultz (Chemistry and Biochemistry) and Mulrooney (Environmental, Earth
+   and Geospatial Sciences) were assumed, not supplied. Check them and each
+   co-author's approval before submitting.
 2. Store data. OpenStreetMap undercounts, varied between runs, and the statewide
    extract mixes in out-of-state stores. A validated registry is the biggest
    improvement available.
