@@ -8,7 +8,8 @@ Each check below pairs a value typed from the manuscript (the `paper` column)
 with the value `reproduce.py` computed (the `computed` column), and also confirms
 that the manuscript text really contains that number as written. A final group of
 checks confirms that Tables 1 and 2 in the .tex are identical to the rows the code
-generates, and that the manuscript contains no en or em dashes.
+generates, that the manuscript contains no en or em dashes, and that no drafting
+markers such as CONFIRM are left in it.
 """
 from __future__ import annotations
 
@@ -162,6 +163,11 @@ def main(argv=None):
     body = strip_comments(raw_tex)
     rows.append(("--" not in body, "no LaTeX en/em dashes (-- or ---) in manuscript", "none", "none" if "--" not in body else "FOUND"))
     rows.append((not re.search("[–—]", body), "no unicode en/em dashes in manuscript", "none", "none" if not re.search("[–—]", body) else "FOUND"))
+
+    # ---- no leftover drafting markers, even inside comments
+    markers = re.findall(r"\b(?:CONFIRM|TODO|TBD|FIXME)\b", raw_tex)   # upper case only, so "confirmed" is fine
+    markers += re.findall(r"revision priority", raw_tex, flags=re.I)
+    rows.append((not markers, "no drafting markers (CONFIRM, TODO, TBD, FIXME) in manuscript", "none", "none" if not markers else markers))
 
     # ---- report
     width = max(len(r[1]) for r in rows)

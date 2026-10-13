@@ -10,7 +10,7 @@ repository, plus a checker that confirms the paper's text matches the results.
 cd paper_reproduction
 pip install -r requirements.txt
 python reproduce.py --sync-manuscript     # about 40 seconds
-python verify_against_paper.py            # expect: 120 of 120 checks passed
+python verify_against_paper.py            # expect: every check passes
 ```
 
 `--sync-manuscript` copies the three figures into `../manuscript/figures/` so the
@@ -93,11 +93,12 @@ paper_reproduction/
 
 ## What the checker verifies
 
-`verify_against_paper.py` runs 120 checks. For each number printed in the paper it
+`verify_against_paper.py` runs about 120 checks. For each number printed in the paper it
 compares the value typed from the manuscript with the value computed here, and
 confirms the number appears in the manuscript text as written. It also confirms
-that Tables 1 and 2 in the manuscript equal the generated rows, and that the
-manuscript contains no en or em dashes. It exits with status 1 if anything fails,
+that Tables 1 and 2 in the manuscript equal the generated rows, that the
+manuscript contains no en or em dashes, and that no drafting markers such as
+CONFIRM remain. It exits with status 1 if anything fails,
 so it can be used in CI or as a pre-submission check.
 
 ## Known limitations of the analysis
