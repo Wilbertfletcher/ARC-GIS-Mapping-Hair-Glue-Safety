@@ -1,0 +1,10 @@
+python==3.11.15
+pandas==3.0.6
+numpy==2.4.6
+scipy==1.17.1
+geopandas==1.2.0
+shapely==2.1.2
+libpysal==4.14.1
+esda==2.9.0
+statsmodels==0.15.0
+matplotlib==3.11.2

@@ -1,0 +1,5 @@
+quartile,tracts,median_density_per_km2,median_nearest_km,pct_no_store_5km
+lowest density,663,29.0,22.6,98.5
+Q2,662,133.0,12.5,88.1
+Q3,662,507.0,6.3,59.1
+highest density,662,1225.0,3.1,24.2

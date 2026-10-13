@@ -1,0 +1,272 @@
+{
+  "statewide": {
+    "tracts_in_file": 2672,
+    "zero_population_tracts_excluded": 23,
+    "tracts": 2649,
+    "population": 10470214,
+    "median_pct_black": 14.7,
+    "stores_in_extract": 349,
+    "stores_inside_state": 183,
+    "stores_mapped_within_8km_of_state": 188,
+    "stores_outside_state": 161,
+    "stores_outside_but_inside_state_bbox": 156,
+    "tracts_no_store_5km": 1787,
+    "pct_no_store_5km": 67.5,
+    "mean_stores_5km": 0.97,
+    "nearest_km_median": 9.3,
+    "nearest_km_q1": 3.9,
+    "nearest_km_q3": 20.4
+  },
+  "moran": {
+    "nearest_store_km": {
+      "I": 0.9204294655578266,
+      "p": 0.001,
+      "n": 2649
+    },
+    "store_count_5km": {
+      "I": 0.8302509625963796,
+      "p": 0.001,
+      "n": 2649
+    },
+    "pct_black": {
+      "I": 0.6563016177196426,
+      "p": 0.001,
+      "n": 2649
+    }
+  },
+  "spearman": {
+    "pct_black_vs_nearest_km": {
+      "rho": -0.2109992105625617,
+      "n": 2649
+    },
+    "pct_black_vs_store_count_5km": {
+      "rho": 0.2156264017770163,
+      "n": 2649
+    }
+  },
+  "quartiles": [
+    {
+      "quartile": "Q1",
+      "tracts": 663,
+      "pct_black_min": 0.0,
+      "pct_black_max": 4.7,
+      "median_nearest_km": 14.2,
+      "mean_stores_5km": 0.68,
+      "pct_no_store_5km": 81.7
+    },
+    {
+      "quartile": "Q2",
+      "tracts": 662,
+      "pct_black_min": 4.7,
+      "pct_black_max": 14.7,
+      "median_nearest_km": 9.2,
+      "mean_stores_5km": 0.97,
+      "pct_no_store_5km": 70.1
+    },
+    {
+      "quartile": "Q3",
+      "tracts": 662,
+      "pct_black_min": 14.7,
+      "pct_black_max": 32.2,
+      "median_nearest_km": 8.7,
+      "mean_stores_5km": 0.98,
+      "pct_no_store_5km": 64.0
+    },
+    {
+      "quartile": "Q4",
+      "tracts": 662,
+      "pct_black_min": 32.2,
+      "pct_black_max": 98.4,
+      "median_nearest_km": 5.5,
+      "mean_stores_5km": 1.23,
+      "pct_no_store_5km": 53.9
+    }
+  ],
+  "density_quartiles": [
+    {
+      "quartile": "lowest density",
+      "tracts": 663,
+      "median_density_per_km2": 29.0,
+      "median_nearest_km": 22.6,
+      "pct_no_store_5km": 98.5
+    },
+    {
+      "quartile": "Q2",
+      "tracts": 662,
+      "median_density_per_km2": 133.0,
+      "median_nearest_km": 12.5,
+      "pct_no_store_5km": 88.1
+    },
+    {
+      "quartile": "Q3",
+      "tracts": 662,
+      "median_density_per_km2": 507.0,
+      "median_nearest_km": 6.3,
+      "pct_no_store_5km": 59.1
+    },
+    {
+      "quartile": "highest density",
+      "tracts": 662,
+      "median_density_per_km2": 1225.0,
+      "median_nearest_km": 3.1,
+      "pct_no_store_5km": 24.2
+    }
+  ],
+  "negative_binomial": {
+    "n": 2624,
+    "dispersion_alpha": 1.0,
+    "terms": {
+      "Intercept": {
+        "coef": -2.231035378922365,
+        "p": 2.3285812306184494e-70,
+        "irr": 0.1074171550815409,
+        "irr_lo": 0.08394257949805203,
+        "irr_hi": 0.1374564050188566
+      },
+      "pct_black": {
+        "coef": 0.02078004655327821,
+        "p": 3.5677612263935563e-40,
+        "irr": 1.0209974550287073,
+        "irr_lo": 1.0178680618357765,
+        "irr_hi": 1.0241364694113808
+      },
+      "poverty_rate": {
+        "coef": 0.020904445006963698,
+        "p": 2.6705143400558813e-08,
+        "irr": 1.0211244734336125,
+        "irr_lo": 1.0136297833390653,
+        "irr_hi": 1.0286745786121838
+      },
+      "inc10k": {
+        "coef": 0.18909748511741792,
+        "p": 1.9406949815659975e-72,
+        "irr": 1.2081587242374037,
+        "irr_lo": 1.183537094614533,
+        "irr_hi": 1.2332925681778857
+      }
+    },
+    "sensitivity_estimated_alpha": {
+      "alpha": 3.4052044605397875,
+      "terms": {
+        "pct_black": {
+          "irr": 1.0246649404289694,
+          "p": 1.9639479781359438e-20
+        },
+        "poverty_rate": {
+          "irr": 1.0237128316749384,
+          "p": 2.4541695887749308e-05
+        },
+        "inc10k": {
+          "irr": 1.2390882031734154,
+          "p": 2.471727261810733e-28
+        }
+      }
+    },
+    "sensitivity_county_clustered_se": {
+      "terms": {
+        "pct_black": {
+          "irr": 1.0209974550287073,
+          "p": 1.7215464736456834e-05
+        },
+        "poverty_rate": {
+          "irr": 1.0211244734336125,
+          "p": 0.0008102663245493283
+        },
+        "inc10k": {
+          "irr": 1.2081587242374037,
+          "p": 2.5045624633650793e-06
+        }
+      }
+    }
+  },
+  "metros": [
+    {
+      "metro": "Charlotte",
+      "county_fips": "119",
+      "tracts": 302,
+      "population": 1115403,
+      "median_pct_black": 29.8,
+      "median_nearest_km": 3.2,
+      "pct_no_store_5km": 22.2,
+      "mean_stores_5km": 3.11,
+      "majority_black_tracts": 69,
+      "nearest_km_majority_black": 3.5,
+      "nearest_km_other": 3.1,
+      "moran_I_distance": 0.79,
+      "moran_p_distance": 0.001
+    },
+    {
+      "metro": "Raleigh",
+      "county_fips": "183",
+      "tracts": 229,
+      "population": 1132103,
+      "median_pct_black": 14.3,
+      "median_nearest_km": 3.7,
+      "pct_no_store_5km": 31.9,
+      "mean_stores_5km": 1.75,
+      "majority_black_tracts": 12,
+      "nearest_km_majority_black": 3.4,
+      "nearest_km_other": 3.8,
+      "moran_I_distance": 0.78,
+      "moran_p_distance": 0.001
+    },
+    {
+      "metro": "Greensboro",
+      "county_fips": "081",
+      "tracts": 125,
+      "population": 539557,
+      "median_pct_black": 29.4,
+      "median_nearest_km": 3.0,
+      "pct_no_store_5km": 29.6,
+      "mean_stores_5km": 4.18,
+      "majority_black_tracts": 36,
+      "nearest_km_majority_black": 2.4,
+      "nearest_km_other": 3.4,
+      "moran_I_distance": 0.7,
+      "moran_p_distance": 0.001
+    },
+    {
+      "metro": "Durham",
+      "county_fips": "063",
+      "tracts": 67,
+      "population": 325101,
+      "median_pct_black": 31.2,
+      "median_nearest_km": 3.6,
+      "pct_no_store_5km": 29.9,
+      "mean_stores_5km": 1.22,
+      "majority_black_tracts": 13,
+      "nearest_km_majority_black": 4.3,
+      "nearest_km_other": 3.5,
+      "moran_I_distance": 0.61,
+      "moran_p_distance": 0.001
+    },
+    {
+      "metro": "Fayetteville",
+      "county_fips": "051",
+      "tracts": 81,
+      "population": 335207,
+      "median_pct_black": 35.9,
+      "median_nearest_km": 5.2,
+      "pct_no_store_5km": 54.3,
+      "mean_stores_5km": 1.33,
+      "majority_black_tracts": 18,
+      "nearest_km_majority_black": 4.4,
+      "nearest_km_other": 5.7,
+      "moran_I_distance": 0.76,
+      "moran_p_distance": 0.001
+    }
+  ],
+  "metro_moran_range": [
+    0.61,
+    0.79
+  ],
+  "settings": {
+    "permutations": 999,
+    "seed": 42,
+    "weights": "queen contiguity, row standardised",
+    "state_buffer_deg": 0.08
+  },
+  "inputs": {
+    "directory": "outputs/streamlit_queries/nc_usa"
+  }
+}

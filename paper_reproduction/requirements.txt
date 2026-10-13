@@ -1,0 +1,11 @@
+# Tested with Python 3.11. Exact versions used for the committed results are in
+# results/environment.txt.
+numpy>=1.26
+pandas>=2.1
+scipy>=1.11
+geopandas>=1.0
+shapely>=2.0
+libpysal>=4.9
+esda>=2.5
+statsmodels>=0.14
+matplotlib>=3.8
