@@ -1,7 +1,7 @@
-# Manuscript notes
+# Paper revision notes
 
-Paper: `fletcher_mulrooney_2026.tex` (PDF alongside it). Everything quantitative in
-it is regenerated and checked by `../paper_reproduction/` (see its README).
+Paper: `manuscript/fletcher_mulrooney_2026.tex` (PDF alongside it). Everything quantitative in
+it is regenerated and checked by `paper_reproduction/` (see its README).
 
 ## History
 
